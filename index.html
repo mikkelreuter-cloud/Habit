@@ -784,6 +784,12 @@
                 </div>
             </div>
 
+            <div style="text-align: center; margin: 16px 0;">
+                <button class="btn btn-secondary" onclick="toggleProgressView()" style="padding: 10px 24px; min-height: 44px;">
+                    <span id="viewToggleText">Vis ugentlig fremskridt</span>
+                </button>
+            </div>
+
             <div class="habits-list" id="habitsGrid"></div>
 
             <button class="add-habit-btn" onclick="openAddHabitModal()">Tilføj Ny Vane</button>
@@ -953,18 +959,49 @@
                     <textarea id="habitWhy" required placeholder="Min motivation..."></textarea>
                 </div>
 
-                <div class="input-group">
-                    <div class="form-group">
-                        <label>Mål</label>
-                        <input type="number" id="habitGoal" min="1" required>
+                <div class="form-group">
+                    <label>Enhed</label>
+                    <select id="habitUnit">
+                        <option value="timer">timer</option>
+                        <option value="dage">dage</option>
+                        <option value="gange">gange</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Ugentlig Plan</label>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 8px;">
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Man</label>
+                            <input type="number" id="planMonday" min="0" value="0" oninput="updateWeeklyTotal()" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Tir</label>
+                            <input type="number" id="planTuesday" min="0" value="0" oninput="updateWeeklyTotal()" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Ons</label>
+                            <input type="number" id="planWednesday" min="0" value="0" oninput="updateWeeklyTotal()" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Tor</label>
+                            <input type="number" id="planThursday" min="0" value="0" oninput="updateWeeklyTotal()" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Fre</label>
+                            <input type="number" id="planFriday" min="0" value="0" oninput="updateWeeklyTotal()" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Lør</label>
+                            <input type="number" id="planSaturday" min="0" value="0" oninput="updateWeeklyTotal()" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Søn</label>
+                            <input type="number" id="planSunday" min="0" value="0" oninput="updateWeeklyTotal()" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Enhed</label>
-                        <select id="habitUnit">
-                            <option value="timer">timer</option>
-                            <option value="dage">dage</option>
-                            <option value="gange">gange</option>
-                        </select>
+                    <div style="text-align: center; margin-top: 12px; color: var(--text-secondary); font-size: 13px;">
+                        Ugentlig total: <strong id="weeklyTotal">0</strong>
                     </div>
                 </div>
 
@@ -1109,6 +1146,7 @@
         let currentCalendarDate = new Date();
         let calendarView = 'month';
         let editingDayDate = null;
+        let progressView = 'daily'; // 'daily' or 'weekly'
 
         // ===== INITIALIZATION =====
         function initApp() {
@@ -1252,21 +1290,27 @@
             const card = document.createElement('div');
             card.className = 'habit-card';
 
-            const progress = calculateHabitProgress(habit);
+            const weeklyProgress = calculateHabitProgress(habit);
+            const dailyProgress = calculateDailyProgress(habit);
             const streak = calculateHabitStreak(habit);
+
+            const isDailyView = progressView === 'daily';
+            const progress = isDailyView ? dailyProgress : weeklyProgress;
+            const label = isDailyView ? 'I DAG' : 'DENNE UGE';
+            const completedIcon = isDailyView && dailyProgress.completed ? ' ✓' : '';
 
             card.innerHTML = `
                 <div class="habit-header" onclick="openHabitChoiceModal('${habit.id}')">
                     <div class="habit-icon">${habit.icon}</div>
                     <div class="habit-info">
-                        <h3>${habit.name}</h3>
+                        <h3>${habit.name}${completedIcon}</h3>
                         <div class="habit-why">"${habit.why}"</div>
                     </div>
                 </div>
                 <div class="habit-progress" onclick="openHabitChoiceModal('${habit.id}')">
                     <div class="progress-label">
-                        <span>${progress.current}/${habit.goal} ${habit.unit}</span>
-                        <span>${Math.min(Math.round(progress.percentage), 100)}%</span>
+                        <span style="text-transform: uppercase; font-size: 11px; color: var(--text-secondary);">${label}</span>
+                        <span>${progress.current}/${progress.goal} ${habit.unit}</span>
                     </div>
                     <div class="progress-bar-container">
                         <div class="progress-bar" style="width: ${Math.min(progress.percentage, 100)}%"></div>
@@ -1286,19 +1330,22 @@
 
         function calculateHabitProgress(habit) {
             const weekSessions = getThisWeekSessions().filter(s => s.habitId === habit.id);
+            const weeklyGoal = getWeeklyTotal(habit);
 
             if (habit.unit === 'timer') {
                 const totalMinutes = weekSessions.reduce((sum, s) => sum + s.duration, 0);
                 const totalHours = Math.round(totalMinutes / 60 * 10) / 10;
                 return {
                     current: totalHours,
-                    percentage: (totalHours / habit.goal) * 100
+                    goal: weeklyGoal,
+                    percentage: weeklyGoal > 0 ? (totalHours / weeklyGoal) * 100 : 0
                 };
             } else {
                 const uniqueDays = new Set(weekSessions.map(s => s.date));
                 return {
                     current: uniqueDays.size,
-                    percentage: (uniqueDays.size / habit.goal) * 100
+                    goal: weeklyGoal,
+                    percentage: weeklyGoal > 0 ? (uniqueDays.size / weeklyGoal) * 100 : 0
                 };
             }
         }
@@ -1329,6 +1376,56 @@
             }
 
             return streak;
+        }
+
+        // ===== WEEKLY PLAN HELPERS =====
+        function getTodaysGoal(habit) {
+            if (!habit.weeklyPlan) return 0;
+            const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const today = new Date().getDay();
+            return habit.weeklyPlan[dayNames[today]] || 0;
+        }
+
+        function getWeeklyTotal(habit) {
+            if (!habit.weeklyPlan) return habit.goal || 0;
+            return Object.values(habit.weeklyPlan).reduce((sum, val) => sum + val, 0);
+        }
+
+        function calculateDailyProgress(habit) {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const todayStr = `${year}-${month}-${day}`;
+
+            const todaySessions = sessions.filter(s => s.habitId === habit.id && s.date === todayStr);
+            const todaysGoal = getTodaysGoal(habit);
+
+            if (habit.unit === 'timer') {
+                const totalMinutes = todaySessions.reduce((sum, s) => sum + s.duration, 0);
+                const totalHours = totalMinutes / 60;
+                return {
+                    current: Math.round(totalHours * 10) / 10,
+                    goal: todaysGoal,
+                    percentage: todaysGoal > 0 ? (totalHours / todaysGoal) * 100 : 0,
+                    completed: totalHours >= todaysGoal && todaysGoal > 0
+                };
+            } else {
+                const hasDone = todaySessions.length > 0;
+                return {
+                    current: hasDone ? 1 : 0,
+                    goal: todaysGoal,
+                    percentage: hasDone && todaysGoal > 0 ? 100 : 0,
+                    completed: hasDone && todaysGoal > 0
+                };
+            }
+        }
+
+        function toggleProgressView() {
+            progressView = progressView === 'daily' ? 'weekly' : 'daily';
+            const buttonText = progressView === 'daily' ? 'Vis ugentlig fremskridt' : 'Vis daglig fremskridt';
+            document.getElementById('viewToggleText').textContent = buttonText;
+            renderHabitsGrid();
         }
 
         // ===== HABIT CHOICE MODAL =====
@@ -1647,25 +1744,65 @@
         }
 
         // ===== HABIT MANAGEMENT =====
+        function updateWeeklyTotal() {
+            const monday = parseInt(document.getElementById('planMonday').value) || 0;
+            const tuesday = parseInt(document.getElementById('planTuesday').value) || 0;
+            const wednesday = parseInt(document.getElementById('planWednesday').value) || 0;
+            const thursday = parseInt(document.getElementById('planThursday').value) || 0;
+            const friday = parseInt(document.getElementById('planFriday').value) || 0;
+            const saturday = parseInt(document.getElementById('planSaturday').value) || 0;
+            const sunday = parseInt(document.getElementById('planSunday').value) || 0;
+
+            const total = monday + tuesday + wednesday + thursday + friday + saturday + sunday;
+            document.getElementById('weeklyTotal').textContent = total;
+        }
+
         function openAddHabitModal() {
             document.getElementById('habitModalTitle').textContent = 'Tilføj Ny Vane';
             document.getElementById('habitForm').reset();
             document.getElementById('habitForm').dataset.editId = '';
+
+            // Reset weekly plan inputs
+            ['planMonday', 'planTuesday', 'planWednesday', 'planThursday', 'planFriday', 'planSaturday', 'planSunday'].forEach(id => {
+                document.getElementById(id).value = 0;
+            });
+            updateWeeklyTotal();
+
             document.getElementById('habitModal').classList.add('active');
         }
 
         function editHabit(habitId) {
             const habit = habits.find(h => h.id === habitId);
-            if (!habit || habit.isDefault) return;
+            if (!habit) return;
 
             document.getElementById('habitModalTitle').textContent = 'Rediger Vane';
             document.getElementById('habitName').value = habit.name;
             document.getElementById('habitIcon').value = habit.icon;
             document.getElementById('habitWhy').value = habit.why;
-            document.getElementById('habitGoal').value = habit.goal;
             document.getElementById('habitUnit').value = habit.unit;
-            document.getElementById('habitForm').dataset.editId = habitId;
 
+            // Populate weekly plan
+            if (habit.weeklyPlan) {
+                document.getElementById('planMonday').value = habit.weeklyPlan.monday || 0;
+                document.getElementById('planTuesday').value = habit.weeklyPlan.tuesday || 0;
+                document.getElementById('planWednesday').value = habit.weeklyPlan.wednesday || 0;
+                document.getElementById('planThursday').value = habit.weeklyPlan.thursday || 0;
+                document.getElementById('planFriday').value = habit.weeklyPlan.friday || 0;
+                document.getElementById('planSaturday').value = habit.weeklyPlan.saturday || 0;
+                document.getElementById('planSunday').value = habit.weeklyPlan.sunday || 0;
+            } else {
+                // Fallback for old habits without weeklyPlan
+                document.getElementById('planMonday').value = habit.goal || 0;
+                document.getElementById('planTuesday').value = habit.goal || 0;
+                document.getElementById('planWednesday').value = habit.goal || 0;
+                document.getElementById('planThursday').value = habit.goal || 0;
+                document.getElementById('planFriday').value = habit.goal || 0;
+                document.getElementById('planSaturday').value = habit.goal || 0;
+                document.getElementById('planSunday').value = habit.goal || 0;
+            }
+
+            updateWeeklyTotal();
+            document.getElementById('habitForm').dataset.editId = habitId;
             document.getElementById('habitModal').classList.add('active');
         }
 
@@ -1692,14 +1829,23 @@
                 name: document.getElementById('habitName').value,
                 icon: document.getElementById('habitIcon').value,
                 why: document.getElementById('habitWhy').value,
-                goal: parseInt(document.getElementById('habitGoal').value),
+                weeklyPlan: {
+                    monday: parseInt(document.getElementById('planMonday').value) || 0,
+                    tuesday: parseInt(document.getElementById('planTuesday').value) || 0,
+                    wednesday: parseInt(document.getElementById('planWednesday').value) || 0,
+                    thursday: parseInt(document.getElementById('planThursday').value) || 0,
+                    friday: parseInt(document.getElementById('planFriday').value) || 0,
+                    saturday: parseInt(document.getElementById('planSaturday').value) || 0,
+                    sunday: parseInt(document.getElementById('planSunday').value) || 0
+                },
                 unit: document.getElementById('habitUnit').value,
                 isDefault: false
             };
 
             if (editId) {
                 const index = habits.findIndex(h => h.id === editId);
-                habits[index] = { ...habits[index], ...habitData };
+                const isDefault = habits[index].isDefault;
+                habits[index] = { ...habits[index], ...habitData, isDefault };
             } else {
                 habits.push(habitData);
             }
