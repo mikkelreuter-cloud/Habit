@@ -1645,13 +1645,20 @@
                 ? new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + (day < 15 ? 1 : -1), day)
                 : new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), day);
 
+            // Set to noon to avoid timezone issues
+            date.setHours(12, 0, 0, 0);
+
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             if (date.getTime() === today.getTime()) {
                 dayElement.classList.add('today');
             }
 
-            const dateStr = date.toISOString().split('T')[0];
+            // Format date as YYYY-MM-DD without timezone conversion
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const dayStr = String(date.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${dayStr}`;
             const daySessions = sessions.filter(s => s.date === dateStr);
             const dayPoints = daySessions.reduce((sum, s) => sum + (s.points || 0), 0);
 
