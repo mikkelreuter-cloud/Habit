@@ -2,54 +2,56 @@
 <html lang="da">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Momentum - Disciplin uden selvkritik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#f4f1ea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Momentum</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
-            --bg-dark: #0a0e27;
-            --bg-card: #1a1f3a;
-            --bg-hover: #252b4a;
-            --green: #00ff88;
-            --orange: #ff6b35;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0c0;
-            --glow-green: 0 0 20px rgba(0, 255, 136, 0.3);
-            --glow-orange: 0 0 20px rgba(255, 107, 53, 0.3);
+            --bg-primary: #f4f1ea;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --border: #d0cdc7;
+            --accent: #2d2d2d;
+            --accent-light: #f0f0f0;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--bg-dark) 0%, #0f1235 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
-            overflow-x: hidden;
+            padding-bottom: 80px;
+            line-height: 1.6;
         }
 
-        h1, h2, h3, .brand {
-            font-family: 'Space Mono', monospace;
+        h1, h2, h3 {
+            font-family: 'Lora', serif;
+            font-weight: 600;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 20px 16px;
         }
 
         /* Header */
         header {
-            background: rgba(26, 31, 58, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid var(--green);
-            box-shadow: var(--glow-green);
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
             padding: 20px 0;
             position: sticky;
             top: 0;
@@ -57,229 +59,185 @@
         }
 
         .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 16px;
+            text-align: center;
         }
 
         .brand {
-            font-size: 28px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--green) 0%, var(--orange) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: var(--glow-green);
+            font-family: 'Lora', serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
         }
 
         .tagline {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-secondary);
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
-        nav {
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
             display: flex;
-            gap: 10px;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 100;
         }
 
         .nav-btn {
-            padding: 12px 24px;
+            flex: 1;
+            padding: 12px 8px;
             background: transparent;
-            border: 2px solid var(--green);
-            color: var(--green);
-            border-radius: 8px;
+            border: none;
+            color: var(--text-secondary);
             cursor: pointer;
-            font-family: 'Space Mono', monospace;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .nav-btn:hover {
-            background: var(--green);
-            color: var(--bg-dark);
-            box-shadow: var(--glow-green);
-            transform: translateY(-2px);
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            min-height: 48px;
         }
 
         .nav-btn.active {
-            background: var(--green);
-            color: var(--bg-dark);
-            box-shadow: var(--glow-green);
+            color: var(--accent);
+        }
+
+        .nav-icon {
+            font-size: 20px;
         }
 
         /* Stats Bar */
         .stats-bar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 24px 0;
         }
 
         .stat-card {
-            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(26, 31, 58, 0.5) 100%);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 255, 136, 0.2);
+            background: var(--bg-card);
+            padding: 20px 12px;
+            border: 1px solid var(--border);
             text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--glow-green);
-            border-color: var(--green);
         }
 
         .stat-value {
-            font-size: 36px;
-            font-weight: 700;
-            font-family: 'Space Mono', monospace;
-            background: linear-gradient(135deg, var(--green) 0%, var(--orange) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Lora', serif;
         }
 
         .stat-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
-            margin-top: 8px;
+            margin-top: 4px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
-        /* Habits Grid */
-        .habits-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+        /* Habits */
+        .habits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .habit-card {
-            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(26, 31, 58, 0.8) 100%);
-            padding: 25px;
-            border-radius: 16px;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
+            background: var(--bg-card);
+            padding: 20px;
+            border: 1px solid var(--border);
             cursor: pointer;
             position: relative;
-            overflow: hidden;
         }
 
-        .habit-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(255, 107, 53, 0.1) 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .habit-card:hover {
-            border-color: var(--green);
-            transform: translateY(-5px);
-            box-shadow: var(--glow-green);
-        }
-
-        .habit-card:hover::before {
-            opacity: 1;
+        .habit-card:active {
+            background: var(--accent-light);
         }
 
         .habit-header {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-            position: relative;
-            z-index: 1;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .habit-icon {
-            font-size: 40px;
-            filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.5));
+            font-size: 32px;
+        }
+
+        .habit-info {
+            flex: 1;
         }
 
         .habit-info h3 {
-            font-size: 20px;
-            margin-bottom: 5px;
+            font-size: 18px;
+            margin-bottom: 2px;
         }
 
         .habit-why {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-secondary);
             font-style: italic;
         }
 
         .habit-progress {
-            margin: 20px 0;
-            position: relative;
-            z-index: 1;
+            margin: 16px 0 12px 0;
         }
 
         .progress-label {
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
-            font-size: 14px;
+            font-size: 13px;
+            color: var(--text-secondary);
         }
 
         .progress-bar-container {
-            height: 8px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
+            height: 4px;
+            background: var(--accent-light);
             overflow: hidden;
         }
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--green) 0%, var(--orange) 100%);
-            border-radius: 10px;
-            transition: width 0.5s ease;
-            box-shadow: var(--glow-green);
+            background: var(--accent);
+            transition: width 0.3s ease;
         }
 
         .habit-streak {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--orange);
-            position: relative;
-            z-index: 1;
+            font-size: 14px;
+            color: var(--text-secondary);
         }
 
         .add-habit-btn {
-            background: linear-gradient(135deg, var(--green) 0%, var(--orange) 100%);
-            color: var(--bg-dark);
+            background: var(--accent);
+            color: var(--bg-card);
             border: none;
-            padding: 20px;
-            border-radius: 16px;
-            font-size: 18px;
-            font-weight: 700;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            font-family: 'Space Mono', monospace;
-            box-shadow: var(--glow-green);
+            width: 100%;
+            min-height: 48px;
         }
 
-        .add-habit-btn:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: var(--glow-green), var(--glow-orange);
+        .add-habit-btn:active {
+            opacity: 0.8;
         }
 
-        /* Modal Styles */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -287,73 +245,47 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 1000;
             align-items: center;
             justify-content: center;
-            animation: fadeIn 0.3s ease;
+            padding: 20px;
         }
 
         .modal.active {
             display: flex;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
         .modal-content {
-            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-dark) 100%);
-            padding: 40px;
-            border-radius: 20px;
-            border: 2px solid var(--green);
-            box-shadow: var(--glow-green), 0 20px 60px rgba(0, 0, 0, 0.5);
+            background: var(--bg-card);
+            padding: 24px;
             max-width: 500px;
-            width: 90%;
+            width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
 
         .modal-close {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 16px;
+            right: 16px;
             background: transparent;
             border: none;
             color: var(--text-secondary);
-            font-size: 30px;
+            font-size: 28px;
             cursor: pointer;
-            transition: all 0.3s ease;
             width: 40px;
             height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-        }
-
-        .modal-close:hover {
-            color: var(--orange);
-            background: rgba(255, 107, 53, 0.1);
-            transform: rotate(90deg);
         }
 
         .modal h2 {
-            font-size: 28px;
+            font-size: 22px;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--green) 0%, var(--orange) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            padding-right: 40px;
         }
 
         .form-group {
@@ -362,11 +294,11 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .form-group input,
@@ -374,21 +306,18 @@
         .form-group select {
             width: 100%;
             padding: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(0, 255, 136, 0.3);
-            border-radius: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
             color: var(--text-primary);
-            font-size: 16px;
+            font-size: 15px;
             font-family: 'Inter', sans-serif;
-            transition: all 0.3s ease;
         }
 
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
-            border-color: var(--green);
-            box-shadow: var(--glow-green);
+            border-color: var(--accent);
         }
 
         .form-group textarea {
@@ -407,162 +336,162 @@
             width: 20px;
             height: 20px;
             cursor: pointer;
-            accent-color: var(--green);
         }
 
         .checkbox-group label {
             margin: 0;
             cursor: pointer;
+            font-size: 14px;
         }
 
         .timer-display {
-            font-size: 72px;
-            font-family: 'Space Mono', monospace;
+            font-size: 64px;
+            font-family: 'Lora', serif;
             text-align: center;
             margin: 30px 0;
-            background: linear-gradient(135deg, var(--green) 0%, var(--orange) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: var(--glow-green);
+            color: var(--text-primary);
+            font-weight: 600;
         }
 
         .timer-controls {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             justify-content: center;
-            margin-top: 30px;
+            margin-top: 24px;
         }
 
         .btn {
-            padding: 15px 30px;
+            padding: 14px 24px;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Space Mono', monospace;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-family: 'Inter', sans-serif;
+            min-height: 48px;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--green) 0%, var(--orange) 100%);
-            color: var(--bg-dark);
-            box-shadow: var(--glow-green);
+            background: var(--accent);
+            color: var(--bg-card);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--glow-green), var(--glow-orange);
+        .btn-primary:active {
+            opacity: 0.8;
         }
 
         .btn-secondary {
             background: transparent;
-            color: var(--green);
-            border: 2px solid var(--green);
+            color: var(--accent);
+            border: 1px solid var(--accent);
         }
 
-        .btn-secondary:hover {
-            background: var(--green);
-            color: var(--bg-dark);
+        .btn-secondary:active {
+            background: var(--accent-light);
         }
 
         .btn-danger {
             background: transparent;
-            color: var(--orange);
-            border: 2px solid var(--orange);
+            color: #c0392b;
+            border: 1px solid #c0392b;
         }
 
-        .btn-danger:hover {
-            background: var(--orange);
-            color: var(--bg-dark);
+        .btn-danger:active {
+            background: #ffe5e0;
         }
 
         .pomodoro-inputs {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
+            gap: 12px;
+            margin-top: 12px;
         }
 
         .motivation-box {
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid var(--green);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            text-align: center;
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+            padding: 16px;
+            margin-bottom: 24px;
         }
 
         .motivation-box p {
-            font-size: 18px;
+            font-size: 15px;
             font-style: italic;
-            color: var(--green);
+            color: var(--text-primary);
         }
 
-        /* Calendar Styles */
+        /* Calendar */
         .calendar-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .view-toggle {
-            display: flex;
-            gap: 10px;
+            margin-bottom: 24px;
+            gap: 12px;
         }
 
         .calendar-nav {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
+        }
+
+        .calendar-nav button {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+        }
+
+        .calendar-nav h2 {
+            font-size: 18px;
+            white-space: nowrap;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 8px;
+        }
+
+        .view-toggle button {
+            padding: 8px 12px;
+            font-size: 13px;
+            min-height: 40px;
         }
 
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-            margin-top: 20px;
+            gap: 4px;
+            margin-top: 16px;
         }
 
         .calendar-day-header {
             text-align: center;
-            padding: 10px;
-            font-weight: 600;
+            padding: 8px 4px;
+            font-weight: 500;
             color: var(--text-secondary);
             text-transform: uppercase;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .calendar-day {
             aspect-ratio: 1;
             background: var(--bg-card);
-            border: 2px solid rgba(0, 255, 136, 0.2);
-            border-radius: 10px;
-            padding: 10px;
+            border: 1px solid var(--border);
+            padding: 8px 4px;
             cursor: pointer;
-            transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100px;
+            min-height: 60px;
         }
 
-        .calendar-day:hover {
-            border-color: var(--green);
-            box-shadow: var(--glow-green);
-            transform: scale(1.05);
+        .calendar-day:active {
+            background: var(--accent-light);
         }
 
         .calendar-day.today {
-            border-color: var(--orange);
-            box-shadow: var(--glow-orange);
+            border: 2px solid var(--accent);
+            background: var(--accent-light);
         }
 
         .calendar-day.other-month {
@@ -570,72 +499,58 @@
         }
 
         .day-number {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
         }
 
         .day-habits {
             display: flex;
-            gap: 4px;
+            gap: 2px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
         .habit-dot {
-            width: 8px;
-            height: 8px;
+            width: 5px;
+            height: 5px;
             border-radius: 50%;
-            background: var(--green);
-            box-shadow: 0 0 5px var(--green);
+            background: var(--accent);
         }
 
         .day-points {
-            font-size: 12px;
-            color: var(--orange);
-            margin-top: 5px;
-            font-weight: 600;
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            font-weight: 500;
         }
 
         /* Statistics */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
         }
 
         .chart-card {
             background: var(--bg-card);
-            padding: 25px;
-            border-radius: 16px;
-            border: 2px solid rgba(0, 255, 136, 0.2);
+            padding: 20px;
+            border: 1px solid var(--border);
         }
 
         .chart-card h3 {
-            margin-bottom: 20px;
-            color: var(--green);
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
         .metric-value {
-            font-size: 32px;
-            font-family: 'Space Mono', monospace;
-            background: linear-gradient(135deg, var(--green) 0%, var(--orange) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .chart-placeholder {
-            width: 100%;
-            height: 200px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
+            font-size: 28px;
+            font-family: 'Lora', serif;
+            font-weight: 600;
         }
 
         .insights-list {
@@ -643,11 +558,11 @@
         }
 
         .insights-list li {
-            padding: 15px;
-            background: rgba(0, 255, 136, 0.1);
-            border-left: 4px solid var(--green);
-            margin-bottom: 10px;
-            border-radius: 5px;
+            padding: 12px;
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
         /* Page Sections */
@@ -659,111 +574,60 @@
             display: block;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .brand {
-                font-size: 20px;
-            }
-
-            nav {
-                gap: 5px;
-            }
-
-            .nav-btn {
-                padding: 10px 15px;
-                font-size: 12px;
-            }
-
-            .habits-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-bar {
-                grid-template-columns: 1fr;
-            }
-
-            .timer-display {
-                font-size: 48px;
-            }
-
-            .modal-content {
-                padding: 25px;
-            }
-
-            .calendar-day {
-                min-height: 80px;
-                padding: 5px;
-            }
-
-            .day-number {
-                font-size: 14px;
-            }
-        }
-
-        /* Additional Styles */
+        /* Additional */
         .completion-message {
             text-align: center;
-            padding: 30px;
-            background: rgba(0, 255, 136, 0.1);
-            border: 2px solid var(--green);
-            border-radius: 15px;
+            padding: 24px;
+            background: var(--accent-light);
+            border: 2px solid var(--accent);
             margin-top: 20px;
         }
 
         .completion-message h3 {
-            font-size: 36px;
-            margin-bottom: 15px;
-            color: var(--green);
+            font-size: 24px;
+            margin-bottom: 12px;
         }
 
         .completion-message p {
-            font-size: 20px;
+            font-size: 15px;
             color: var(--text-secondary);
         }
 
         .points-earned {
-            font-size: 48px;
-            font-family: 'Space Mono', monospace;
-            background: linear-gradient(135deg, var(--green) 0%, var(--orange) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 20px 0;
+            font-size: 36px;
+            font-family: 'Lora', serif;
+            font-weight: 600;
+            margin: 16px 0;
         }
 
         .habit-actions {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            position: relative;
-            z-index: 1;
+            gap: 8px;
+            margin-top: 12px;
         }
 
         .habit-actions button {
             flex: 1;
-            padding: 8px;
-            border: 2px solid var(--green);
+            padding: 10px;
+            border: 1px solid var(--border);
             background: transparent;
-            color: var(--green);
-            border-radius: 8px;
+            color: var(--text-primary);
             cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s ease;
+            font-size: 13px;
+            min-height: 44px;
         }
 
-        .habit-actions button:hover {
-            background: var(--green);
-            color: var(--bg-dark);
+        .habit-actions button:active {
+            background: var(--accent-light);
         }
 
         .habit-actions button.delete-btn {
-            border-color: var(--orange);
-            color: var(--orange);
+            color: #c0392b;
+            border-color: #c0392b;
         }
 
-        .habit-actions button.delete-btn:hover {
-            background: var(--orange);
-            color: var(--bg-dark);
+        .habit-actions button.delete-btn:active {
+            background: #ffe5e0;
         }
 
         .day-detail-list {
@@ -772,11 +636,10 @@
         }
 
         .day-detail-item {
-            background: rgba(0, 255, 136, 0.1);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            border-left: 4px solid var(--green);
+            background: var(--accent-light);
+            padding: 16px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--accent);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -784,22 +647,22 @@
 
         .day-detail-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .icon-btn {
             background: transparent;
             border: none;
-            color: var(--green);
+            color: var(--text-secondary);
             cursor: pointer;
-            font-size: 18px;
-            transition: all 0.3s ease;
-            padding: 5px 10px;
+            font-size: 20px;
+            padding: 8px;
+            min-width: 44px;
+            min-height: 44px;
         }
 
-        .icon-btn:hover {
-            color: var(--orange);
-            transform: scale(1.2);
+        .icon-btn:active {
+            opacity: 0.5;
         }
 
         .empty-state {
@@ -809,8 +672,8 @@
         }
 
         .empty-state h3 {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 20px;
+            margin-bottom: 8px;
         }
 
         canvas {
@@ -820,7 +683,7 @@
 
         .input-group {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: flex-end;
         }
 
@@ -828,20 +691,66 @@
             flex: 1;
             margin-bottom: 0;
         }
+
+        /* Page title */
+        .page-title {
+            font-size: 24px;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 600px) {
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timer-display {
+                font-size: 48px;
+            }
+
+            .calendar-day {
+                min-height: 50px;
+                padding: 4px 2px;
+            }
+
+            .day-number {
+                font-size: 12px;
+            }
+
+            .calendar-nav h2 {
+                font-size: 16px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .timer-controls {
+                flex-direction: column;
+            }
+
+            .timer-controls .btn {
+                width: 100%;
+            }
+        }
+
+        /* Smooth transitions */
+        * {
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <div>
-                <div class="brand">MOMENTUM</div>
-                <div class="tagline">Disciplin uden selvkritik</div>
-            </div>
-            <nav>
-                <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
-                <button class="nav-btn" onclick="showPage('calendar')">Kalender</button>
-                <button class="nav-btn" onclick="showPage('statistics')">Statistik</button>
-            </nav>
+            <div class="brand">Momentum</div>
+            <div class="tagline">Disciplin uden selvkritik</div>
         </div>
     </header>
 
@@ -851,34 +760,31 @@
             <div class="stats-bar">
                 <div class="stat-card">
                     <div class="stat-value" id="totalPoints">0</div>
-                    <div class="stat-label">Total Points</div>
+                    <div class="stat-label">Points</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="currentStreak">0</div>
-                    <div class="stat-label">Nuværende Streak</div>
+                    <div class="stat-label">Streak</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="weekProgress">0%</div>
-                    <div class="stat-label">Uge-fremgang</div>
+                    <div class="stat-label">Uge</div>
                 </div>
             </div>
 
-            <div class="habits-grid" id="habitsGrid"></div>
+            <div class="habits-list" id="habitsGrid"></div>
 
-            <button class="add-habit-btn" onclick="openAddHabitModal()">+ Tilføj Ny Vane</button>
+            <button class="add-habit-btn" onclick="openAddHabitModal()">Tilføj Ny Vane</button>
         </div>
 
         <!-- CALENDAR PAGE -->
         <div id="calendar" class="page-section">
+            <h2 class="page-title">Kalender</h2>
             <div class="calendar-controls">
                 <div class="calendar-nav">
-                    <button class="btn btn-secondary" onclick="changeMonth(-1)">←</button>
+                    <button class="btn btn-secondary" onclick="changeMonth(-1)">‹</button>
                     <h2 id="currentMonth">Januar 2026</h2>
-                    <button class="btn btn-secondary" onclick="changeMonth(1)">→</button>
-                </div>
-                <div class="view-toggle">
-                    <button class="btn btn-primary" onclick="setCalendarView('month')">Måned</button>
-                    <button class="btn btn-secondary" onclick="setCalendarView('week')">Uge</button>
+                    <button class="btn btn-secondary" onclick="changeMonth(1)">›</button>
                 </div>
             </div>
             <div class="calendar-grid" id="calendarGrid"></div>
@@ -886,7 +792,7 @@
 
         <!-- STATISTICS PAGE -->
         <div id="statistics" class="page-section">
-            <h2 style="margin-bottom: 30px; font-size: 32px;">📊 Statistik & Analytics</h2>
+            <h2 class="page-title">Statistik</h2>
 
             <div class="stats-grid">
                 <div class="chart-card">
@@ -900,33 +806,49 @@
                     <p class="stat-label">points</p>
                 </div>
                 <div class="chart-card">
-                    <h3>Gennemsnitlig Completion Rate</h3>
+                    <h3>Completion Rate</h3>
                     <div class="metric-value" id="avgCompletion">0%</div>
                 </div>
                 <div class="chart-card">
                     <h3>Længste Streak</h3>
-                    <div class="metric-value" id="longestStreak">0 🔥</div>
+                    <div class="metric-value" id="longestStreak">0</div>
                 </div>
             </div>
 
-            <div class="chart-card" style="margin-bottom: 20px;">
-                <h3>Points Over Tid (Sidste 30 Dage)</h3>
+            <div class="chart-card" style="margin-bottom: 12px;">
+                <h3>Points (Sidste 30 Dage)</h3>
                 <canvas id="pointsChart" height="100"></canvas>
             </div>
 
-            <div class="chart-card" style="margin-bottom: 20px;">
-                <h3>Vaner Per Uge</h3>
+            <div class="chart-card" style="margin-bottom: 12px;">
+                <h3>Vaner Denne Uge</h3>
                 <canvas id="habitsChart" height="100"></canvas>
             </div>
 
             <div class="chart-card">
-                <h3>💡 Insights</h3>
+                <h3>Insights</h3>
                 <ul class="insights-list" id="insightsList">
                     <li>Start med at tracke dine vaner for at se insights!</li>
                 </ul>
             </div>
         </div>
     </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" onclick="showPage('dashboard')">
+            <span class="nav-icon">⌂</span>
+            <span>Hjem</span>
+        </button>
+        <button class="nav-btn" onclick="showPage('calendar')">
+            <span class="nav-icon">▦</span>
+            <span>Kalender</span>
+        </button>
+        <button class="nav-btn" onclick="showPage('statistics')">
+            <span class="nav-icon">◓</span>
+            <span>Statistik</span>
+        </button>
+    </nav>
 
     <!-- TIMER MODAL -->
     <div id="timerModal" class="modal">
@@ -940,7 +862,7 @@
 
             <div class="checkbox-group">
                 <input type="checkbox" id="pomodoroToggle" onchange="togglePomodoro()">
-                <label for="pomodoroToggle">Aktiver Pomodoro-metoden</label>
+                <label for="pomodoroToggle">Pomodoro-metoden</label>
             </div>
 
             <div id="pomodoroInputs" class="pomodoro-inputs" style="display: none;">
@@ -949,19 +871,19 @@
                     <input type="number" id="workTime" value="25" min="1">
                 </div>
                 <div class="form-group">
-                    <label>Pausetid (min)</label>
+                    <label>Pause (min)</label>
                     <input type="number" id="breakTime" value="5" min="1">
                 </div>
             </div>
 
             <div id="simpleTimerInput" class="form-group">
-                <label>Timer (minutter)</label>
+                <label>Tid (minutter)</label>
                 <input type="number" id="simpleTime" value="30" min="1">
             </div>
 
             <div class="timer-display" id="timerDisplay">00:00</div>
 
-            <div id="timerStatus" style="text-align: center; color: var(--text-secondary); margin-bottom: 20px;">
+            <div id="timerStatus" style="text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px;">
                 Klar til at starte
             </div>
 
@@ -994,13 +916,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Hvorfor jeg ønsker denne vane</label>
+                    <label>Hvorfor</label>
                     <textarea id="habitWhy" required placeholder="Min motivation..."></textarea>
                 </div>
 
                 <div class="input-group">
                     <div class="form-group">
-                        <label>Ugentligt mål</label>
+                        <label>Mål</label>
                         <input type="number" id="habitGoal" min="1" required>
                     </div>
                     <div class="form-group">
@@ -1029,7 +951,7 @@
 
             <div id="dayDetailContent"></div>
 
-            <button class="btn btn-primary" onclick="openManualEntry()" style="margin-top: 20px; width: 100%;">+ Tilføj Manuel Entry</button>
+            <button class="btn btn-primary" onclick="openManualEntry()" style="margin-top: 20px; width: 100%;">Tilføj Entry</button>
         </div>
     </div>
 
@@ -1046,7 +968,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Varighed (minutter)</label>
+                    <label>Varighed (min)</label>
                     <input type="number" id="manualDuration" min="1" required>
                 </div>
 
@@ -1169,7 +1091,7 @@
             });
 
             document.getElementById(page).classList.add('active');
-            event.target.classList.add('active');
+            event.target.closest('.nav-btn').classList.add('active');
 
             if (page === 'calendar') renderCalendar();
             if (page === 'statistics') renderStatistics();
@@ -1242,7 +1164,7 @@
         function getThisWeekSessions() {
             const now = new Date();
             const weekStart = new Date(now);
-            weekStart.setDate(now.getDate() - now.getDay() + 1); // Monday
+            weekStart.setDate(now.getDate() - now.getDay() + 1);
             weekStart.setHours(0, 0, 0, 0);
 
             return sessions.filter(s => {
@@ -1278,8 +1200,8 @@
                 </div>
                 <div class="habit-progress" onclick="openTimerModal('${habit.id}')">
                     <div class="progress-label">
-                        <span>Uge-fremgang</span>
                         <span>${progress.current}/${habit.goal} ${habit.unit}</span>
+                        <span>${Math.min(Math.round(progress.percentage), 100)}%</span>
                     </div>
                     <div class="progress-bar-container">
                         <div class="progress-bar" style="width: ${Math.min(progress.percentage, 100)}%"></div>
@@ -1557,21 +1479,25 @@
         }
 
         function playNotificationSound() {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
 
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
 
-            oscillator.frequency.value = 800;
-            oscillator.type = 'sine';
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
 
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
 
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch (e) {
+                // Silent fail if audio context not supported
+            }
         }
 
         function showNotification() {
@@ -1782,7 +1708,7 @@
                                     <small>${session.duration} min - ${session.points} points</small>
                                 </div>
                                 <div class="day-detail-actions">
-                                    <button class="icon-btn" onclick="deleteSession('${session.id}')">🗑️</button>
+                                    <button class="icon-btn" onclick="deleteSession('${session.id}')">🗑</button>
                                 </div>
                             </li>
                         `;
@@ -1867,7 +1793,7 @@
             document.getElementById('bestWeek').textContent = bestWeek;
             document.getElementById('worstWeek').textContent = worstWeek;
             document.getElementById('avgCompletion').textContent = avgCompletion + '%';
-            document.getElementById('longestStreak').textContent = longestStreak + ' 🔥';
+            document.getElementById('longestStreak').textContent = longestStreak;
         }
 
         function calculateWeeklyPoints() {
@@ -1942,7 +1868,8 @@
 
             ctx.clearRect(0, 0, width, height);
 
-            ctx.strokeStyle = 'rgba(0, 255, 136, 0.2)';
+            // Grid lines
+            ctx.strokeStyle = '#d0cdc7';
             ctx.lineWidth = 1;
             for (let i = 0; i <= 4; i++) {
                 const y = padding + (height - padding * 2) * (i / 4);
@@ -1952,12 +1879,9 @@
                 ctx.stroke();
             }
 
-            const gradient = ctx.createLinearGradient(0, 0, 0, height);
-            gradient.addColorStop(0, '#00ff88');
-            gradient.addColorStop(1, '#ff6b35');
-
-            ctx.strokeStyle = gradient;
-            ctx.lineWidth = 3;
+            // Line
+            ctx.strokeStyle = '#2d2d2d';
+            ctx.lineWidth = 2;
             ctx.beginPath();
 
             data.forEach((value, index) => {
@@ -1973,13 +1897,14 @@
 
             ctx.stroke();
 
-            ctx.fillStyle = '#00ff88';
+            // Points
+            ctx.fillStyle = '#2d2d2d';
             data.forEach((value, index) => {
                 const x = padding + (width - padding * 2) * (index / (data.length - 1));
                 const y = height - padding - (height - padding * 2) * (value / maxValue);
 
                 ctx.beginPath();
-                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
                 ctx.fill();
             });
         }
@@ -2009,15 +1934,11 @@
                 const barHeight = (height - padding * 2) * (count / maxCount);
                 const y = height - padding - barHeight;
 
-                const gradient = ctx.createLinearGradient(x, y, x, height - padding);
-                gradient.addColorStop(0, '#00ff88');
-                gradient.addColorStop(1, '#ff6b35');
-
-                ctx.fillStyle = gradient;
+                ctx.fillStyle = '#2d2d2d';
                 ctx.fillRect(x, y, barWidth, barHeight);
 
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '12px Inter';
+                ctx.fillStyle = '#666666';
+                ctx.font = '14px Inter';
                 ctx.textAlign = 'center';
                 ctx.fillText(habits[index].icon, x + barWidth / 2, height - padding + 20);
             });
@@ -2051,9 +1972,9 @@
             }).length;
 
             if (morningHours > afternoonHours * 1.5) {
-                insights.push('Du er mest produktiv om morgenen! 🌅');
+                insights.push('Du er mest produktiv om morgenen');
             } else if (afternoonHours > morningHours * 1.5) {
-                insights.push('Du arbejder bedst om eftermiddagen! ☀️');
+                insights.push('Du arbejder bedst om eftermiddagen');
             }
 
             const weekdaySessions = {};
@@ -2065,13 +1986,13 @@
             const minDay = Object.entries(weekdaySessions).sort((a, b) => a[1] - b[1])[0];
             if (minDay) {
                 const dayNames = ['søndagen', 'mandagen', 'tirsdagen', 'onsdagen', 'torsdagen', 'fredagen', 'lørdagen'];
-                insights.push(`Du misser mest aktivitet om ${dayNames[minDay[0]]} 📅`);
+                insights.push(`Du misser mest aktivitet om ${dayNames[minDay[0]]}`);
             }
 
             const totalPoints = sessions.reduce((sum, s) => sum + s.points, 0);
             const avgPoints = totalPoints / Math.max(sessions.length, 1);
             if (avgPoints > 8) {
-                insights.push('Du er utrolig konsekvent! Fortsæt sådan! 🚀');
+                insights.push('Du er utrolig konsekvent! Fortsæt sådan!');
             }
 
             return insights;
