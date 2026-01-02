@@ -712,6 +712,114 @@
             border-bottom: 1px solid var(--border);
         }
 
+        /* Heatmap */
+        .heatmap-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .heatmap-table th,
+        .heatmap-table td {
+            padding: 12px 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .heatmap-table th {
+            background: var(--accent-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .heatmap-table td.habit-name {
+            text-align: left;
+            font-weight: 500;
+            background: var(--accent-light);
+        }
+
+        .heatmap-cell {
+            position: relative;
+            min-height: 44px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .heatmap-cell.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .heatmap-cell.partial {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .heatmap-cell.failure {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .heatmap-cell.no-goal {
+            background: var(--accent-light);
+            color: var(--text-secondary);
+        }
+
+        .heatmap-progress {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .heatmap-icon {
+            font-size: 16px;
+        }
+
+        .weekday-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--accent-light);
+            border-left: 3px solid var(--accent);
+        }
+
+        .weekday-bar .day-name {
+            width: 80px;
+            font-weight: 500;
+        }
+
+        .weekday-bar .progress-container {
+            flex: 1;
+            height: 24px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .weekday-bar .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .weekday-bar .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
         /* Responsive improvements */
         @media (max-width: 600px) {
             .stats-bar {
@@ -812,42 +920,36 @@
         <div id="statistics" class="page-section">
             <h2 class="page-title">Statistik</h2>
 
+            <!-- Ugentlig Heatmap -->
+            <div class="chart-card" style="margin-bottom: 20px;">
+                <h3>Ugentlig Heatmap - Denne Uge</h3>
+                <div id="weeklyHeatmap" style="overflow-x: auto;"></div>
+            </div>
+
+            <!-- Completion Rate per Ugedag -->
+            <div class="chart-card" style="margin-bottom: 20px;">
+                <h3>Success Rate per Ugedag</h3>
+                <div id="weekdaySuccess"></div>
+            </div>
+
+            <!-- Pattern Insights -->
+            <div class="chart-card" style="margin-bottom: 20px;">
+                <h3>📊 Mønstre & Indsigter</h3>
+                <ul class="insights-list" id="patternInsights">
+                    <li>Start med at tracke dine vaner for at se mønstre!</li>
+                </ul>
+            </div>
+
+            <!-- Historisk Data -->
             <div class="stats-grid">
-                <div class="chart-card">
-                    <h3>Bedste Uge</h3>
-                    <div class="metric-value" id="bestWeek">0</div>
-                    <p class="stat-label">points</p>
-                </div>
-                <div class="chart-card">
-                    <h3>Værste Uge</h3>
-                    <div class="metric-value" id="worstWeek">0</div>
-                    <p class="stat-label">points</p>
-                </div>
-                <div class="chart-card">
-                    <h3>Completion Rate</h3>
-                    <div class="metric-value" id="avgCompletion">0%</div>
-                </div>
                 <div class="chart-card">
                     <h3>Længste Streak</h3>
                     <div class="metric-value" id="longestStreak">0</div>
                 </div>
-            </div>
-
-            <div class="chart-card" style="margin-bottom: 12px;">
-                <h3>Points (Sidste 30 Dage)</h3>
-                <canvas id="pointsChart" height="100"></canvas>
-            </div>
-
-            <div class="chart-card" style="margin-bottom: 12px;">
-                <h3>Vaner Denne Uge</h3>
-                <canvas id="habitsChart" height="100"></canvas>
-            </div>
-
-            <div class="chart-card">
-                <h3>Insights</h3>
-                <ul class="insights-list" id="insightsList">
-                    <li>Start med at tracke dine vaner for at se insights!</li>
-                </ul>
+                <div class="chart-card">
+                    <h3>Total Points</h3>
+                    <div class="metric-value" id="totalPointsStats">0</div>
+                </div>
             </div>
         </div>
     </div>
@@ -2065,37 +2167,295 @@
 
         // ===== STATISTICS =====
         function renderStatistics() {
-            renderKeyMetrics();
-            renderPointsChart();
-            renderHabitsChart();
-            renderInsights();
+            renderWeeklyHeatmap();
+            renderWeekdaySuccess();
+            renderPatternInsights();
+            renderHistoricalStats();
         }
 
-        function renderKeyMetrics() {
-            const weeklyPoints = calculateWeeklyPoints();
-            const bestWeek = Math.max(...weeklyPoints, 0);
-            const worstWeek = weeklyPoints.length > 0 ? Math.min(...weeklyPoints) : 0;
-            const avgCompletion = calculateWeekProgress();
-            const longestStreak = calculateLongestStreak();
+        function renderWeeklyHeatmap() {
+            const container = document.getElementById('weeklyHeatmap');
 
-            document.getElementById('bestWeek').textContent = bestWeek;
-            document.getElementById('worstWeek').textContent = worstWeek;
-            document.getElementById('avgCompletion').textContent = avgCompletion + '%';
-            document.getElementById('longestStreak').textContent = longestStreak;
-        }
+            if (habits.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 20px; color: var(--text-secondary);">Tilføj vaner for at se heatmap</p>';
+                return;
+            }
 
-        function calculateWeeklyPoints() {
-            const weeks = {};
-            sessions.forEach(session => {
-                const date = new Date(session.date);
-                const weekStart = new Date(date);
-                weekStart.setDate(date.getDate() - date.getDay() + 1);
-                const weekKey = weekStart.toISOString().split('T')[0];
+            const dayNames = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn'];
+            const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-                weeks[weekKey] = (weeks[weekKey] || 0) + session.points;
+            // Get current week dates
+            const weekDates = getCurrentWeekDates();
+
+            let html = '<table class="heatmap-table"><thead><tr>';
+            html += '<th>Vane</th>';
+            dayNames.forEach((day, i) => {
+                const date = new Date(weekDates[i]);
+                html += `<th>${day}<br><small>${date.getDate()}/${date.getMonth() + 1}</small></th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            habits.forEach(habit => {
+                html += '<tr>';
+                html += `<td class="habit-name">${habit.icon} ${habit.name}</td>`;
+
+                dayKeys.forEach((dayKey, i) => {
+                    const goal = habit.weeklyPlan ? habit.weeklyPlan[dayKey] : 0;
+                    const dateStr = weekDates[i];
+                    const progress = calculateDayProgress(habit, dateStr);
+
+                    let cellClass = 'no-goal';
+                    let icon = '-';
+                    let progressText = '';
+
+                    if (goal > 0) {
+                        const percentage = (progress.current / goal) * 100;
+
+                        if (percentage >= 100) {
+                            cellClass = 'success';
+                            icon = '✓';
+                        } else if (percentage >= 50) {
+                            cellClass = 'partial';
+                            icon = '○';
+                        } else if (progress.current > 0) {
+                            cellClass = 'partial';
+                            icon = '○';
+                        } else {
+                            cellClass = 'failure';
+                            icon = '✗';
+                        }
+
+                        progressText = `${progress.current}/${goal}`;
+                    }
+
+                    html += `<td><div class="heatmap-cell ${cellClass}">
+                        <span class="heatmap-icon">${icon}</span>
+                        <span class="heatmap-progress">${progressText}</span>
+                    </div></td>`;
+                });
+
+                html += '</tr>';
             });
 
-            return Object.values(weeks);
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function getCurrentWeekDates() {
+            const dates = [];
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const monday = new Date(today);
+            monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(monday);
+                date.setDate(monday.getDate() + i);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                dates.push(`${year}-${month}-${day}`);
+            }
+
+            return dates;
+        }
+
+        function calculateDayProgress(habit, dateStr) {
+            const daySessions = sessions.filter(s => s.habitId === habit.id && s.date === dateStr);
+
+            if (habit.unit === 'timer') {
+                const totalMinutes = daySessions.reduce((sum, s) => sum + s.duration, 0);
+                const totalHours = Math.round(totalMinutes / 60 * 10) / 10;
+                return { current: totalHours };
+            } else {
+                const hasDone = daySessions.length > 0;
+                return { current: hasDone ? 1 : 0 };
+            }
+        }
+
+        function renderWeekdaySuccess() {
+            const container = document.getElementById('weekdaySuccess');
+
+            if (sessions.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 20px; color: var(--text-secondary);">Ingen data endnu</p>';
+                return;
+            }
+
+            const dayNames = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag'];
+            const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+            let html = '';
+
+            dayKeys.forEach((dayKey, dayIndex) => {
+                let totalGoals = 0;
+                let totalCompleted = 0;
+
+                habits.forEach(habit => {
+                    const goal = habit.weeklyPlan ? habit.weeklyPlan[dayKey] : 0;
+                    if (goal > 0) {
+                        totalGoals++;
+
+                        // Check all historical data for this weekday
+                        const allDatesForThisWeekday = getAllDatesForWeekday(dayIndex + 1);
+                        allDatesForThisWeekday.forEach(dateStr => {
+                            const progress = calculateDayProgress(habit, dateStr);
+                            if (progress.current >= goal) {
+                                totalCompleted++;
+                            }
+                        });
+                    }
+                });
+
+                const successRate = totalGoals > 0 ? Math.round((totalCompleted / totalGoals) * 100) : 0;
+
+                html += `
+                    <div class="weekday-bar">
+                        <div class="day-name">${dayNames[dayIndex]}</div>
+                        <div class="progress-container">
+                            <div class="progress-fill" style="width: ${successRate}%"></div>
+                            <div class="progress-text">${successRate}%</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function getAllDatesForWeekday(weekday) {
+            const dates = [];
+            const allDates = [...new Set(sessions.map(s => s.date))];
+
+            allDates.forEach(dateStr => {
+                const date = new Date(dateStr);
+                if (date.getDay() === weekday || (weekday === 7 && date.getDay() === 0)) {
+                    dates.push(dateStr);
+                }
+            });
+
+            return dates;
+        }
+
+        function renderPatternInsights() {
+            const insightsList = document.getElementById('patternInsights');
+            const insights = generatePatternInsights();
+
+            if (insights.length === 0) {
+                insightsList.innerHTML = '<li>Start med at tracke dine vaner for at se mønstre!</li>';
+                return;
+            }
+
+            insightsList.innerHTML = insights.map(insight => `<li>${insight}</li>`).join('');
+        }
+
+        function generatePatternInsights() {
+            const insights = [];
+
+            if (sessions.length === 0) return insights;
+
+            const dayNames = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag'];
+            const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+            // Analyze each habit
+            habits.forEach(habit => {
+                if (!habit.weeklyPlan) return;
+
+                const habitName = habit.name;
+                let worstDay = null;
+                let worstRate = 100;
+                let bestDay = null;
+                let bestRate = 0;
+
+                dayKeys.forEach((dayKey, dayIndex) => {
+                    const goal = habit.weeklyPlan[dayKey];
+                    if (goal === 0) return;
+
+                    const allDates = getAllDatesForWeekday(dayIndex);
+                    let completed = 0;
+                    let total = allDates.length;
+
+                    if (total === 0) return;
+
+                    allDates.forEach(dateStr => {
+                        const progress = calculateDayProgress(habit, dateStr);
+                        if (progress.current >= goal) {
+                            completed++;
+                        }
+                    });
+
+                    const rate = (completed / total) * 100;
+
+                    if (rate < worstRate) {
+                        worstRate = rate;
+                        worstDay = dayIndex;
+                    }
+
+                    if (rate > bestRate) {
+                        bestRate = rate;
+                        bestDay = dayIndex;
+                    }
+                });
+
+                // Generate insights
+                if (worstDay !== null && worstRate < 50) {
+                    insights.push(`⚠️ Du misser ofte ${habitName} om ${dayNames[worstDay]}en (${Math.round(worstRate)}% success rate)`);
+                }
+
+                if (bestDay !== null && bestRate >= 80) {
+                    insights.push(`🎯 Du klarer ${habitName} rigtig godt om ${dayNames[bestDay]}en (${Math.round(bestRate)}% success rate)!`);
+                }
+            });
+
+            // Overall patterns
+            const weekdayData = {};
+            dayKeys.forEach((_, i) => {
+                weekdayData[i] = { total: 0, completed: 0 };
+            });
+
+            habits.forEach(habit => {
+                if (!habit.weeklyPlan) return;
+
+                dayKeys.forEach((dayKey, dayIndex) => {
+                    const goal = habit.weeklyPlan[dayKey];
+                    if (goal === 0) return;
+
+                    const allDates = getAllDatesForWeekday(dayIndex);
+                    allDates.forEach(dateStr => {
+                        weekdayData[dayIndex].total++;
+                        const progress = calculateDayProgress(habit, dateStr);
+                        if (progress.current >= goal) {
+                            weekdayData[dayIndex].completed++;
+                        }
+                    });
+                });
+            });
+
+            let hardestDay = null;
+            let hardestRate = 100;
+            Object.keys(weekdayData).forEach(dayIndex => {
+                const data = weekdayData[dayIndex];
+                if (data.total > 0) {
+                    const rate = (data.completed / data.total) * 100;
+                    if (rate < hardestRate) {
+                        hardestRate = rate;
+                        hardestDay = parseInt(dayIndex);
+                    }
+                }
+            });
+
+            if (hardestDay !== null && hardestRate < 60) {
+                insights.push(`💡 ${dayNames[hardestDay].charAt(0).toUpperCase() + dayNames[hardestDay].slice(1)} er generelt din sværeste dag. Overvej at justere dine mål eller flytte aktiviteter til andre dage.`);
+            }
+
+            return insights;
+        }
+
+        function renderHistoricalStats() {
+            const longestStreak = calculateLongestStreak();
+            const totalPoints = sessions.reduce((sum, s) => sum + (s.points || 0), 0);
+
+            document.getElementById('longestStreak').textContent = longestStreak;
+            document.getElementById('totalPointsStats').textContent = totalPoints;
         }
 
         function calculateLongestStreak() {
@@ -2119,171 +2479,6 @@
             }
 
             return longestStreak;
-        }
-
-        function renderPointsChart() {
-            const canvas = document.getElementById('pointsChart');
-            const ctx = canvas.getContext('2d');
-
-            const last30Days = getLast30Days();
-            const data = last30Days.map(date => {
-                const daySessions = sessions.filter(s => s.date === date);
-                return daySessions.reduce((sum, s) => sum + s.points, 0);
-            });
-
-            drawLineChart(ctx, canvas, data, last30Days);
-        }
-
-        function getLast30Days() {
-            const days = [];
-            const today = new Date();
-            for (let i = 29; i >= 0; i--) {
-                const date = new Date(today);
-                date.setDate(today.getDate() - i);
-                days.push(date.toISOString().split('T')[0]);
-            }
-            return days;
-        }
-
-        function drawLineChart(ctx, canvas, data, labels) {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = 200;
-
-            const width = canvas.width;
-            const height = canvas.height;
-            const padding = 40;
-            const maxValue = Math.max(...data, 10);
-
-            ctx.clearRect(0, 0, width, height);
-
-            // Grid lines
-            ctx.strokeStyle = '#d0cdc7';
-            ctx.lineWidth = 1;
-            for (let i = 0; i <= 4; i++) {
-                const y = padding + (height - padding * 2) * (i / 4);
-                ctx.beginPath();
-                ctx.moveTo(padding, y);
-                ctx.lineTo(width - padding, y);
-                ctx.stroke();
-            }
-
-            // Line
-            ctx.strokeStyle = '#2d2d2d';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-
-            data.forEach((value, index) => {
-                const x = padding + (width - padding * 2) * (index / (data.length - 1));
-                const y = height - padding - (height - padding * 2) * (value / maxValue);
-
-                if (index === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            });
-
-            ctx.stroke();
-
-            // Points
-            ctx.fillStyle = '#2d2d2d';
-            data.forEach((value, index) => {
-                const x = padding + (width - padding * 2) * (index / (data.length - 1));
-                const y = height - padding - (height - padding * 2) * (value / maxValue);
-
-                ctx.beginPath();
-                ctx.arc(x, y, 3, 0, Math.PI * 2);
-                ctx.fill();
-            });
-        }
-
-        function renderHabitsChart() {
-            const canvas = document.getElementById('habitsChart');
-            const ctx = canvas.getContext('2d');
-
-            canvas.width = canvas.offsetWidth;
-            canvas.height = 200;
-
-            const width = canvas.width;
-            const height = canvas.height;
-            const padding = 40;
-
-            ctx.clearRect(0, 0, width, height);
-
-            const habitCounts = habits.map(habit => {
-                return getThisWeekSessions().filter(s => s.habitId === habit.id).length;
-            });
-
-            const maxCount = Math.max(...habitCounts, 1);
-            const barWidth = (width - padding * 2) / habits.length - 10;
-
-            habitCounts.forEach((count, index) => {
-                const x = padding + index * ((width - padding * 2) / habits.length);
-                const barHeight = (height - padding * 2) * (count / maxCount);
-                const y = height - padding - barHeight;
-
-                ctx.fillStyle = '#2d2d2d';
-                ctx.fillRect(x, y, barWidth, barHeight);
-
-                ctx.fillStyle = '#666666';
-                ctx.font = '14px Inter';
-                ctx.textAlign = 'center';
-                ctx.fillText(habits[index].icon, x + barWidth / 2, height - padding + 20);
-            });
-        }
-
-        function renderInsights() {
-            const insightsList = document.getElementById('insightsList');
-            const insights = generateInsights();
-
-            if (insights.length === 0) {
-                insightsList.innerHTML = '<li>Start med at tracke dine vaner for at se insights!</li>';
-                return;
-            }
-
-            insightsList.innerHTML = insights.map(insight => `<li>${insight}</li>`).join('');
-        }
-
-        function generateInsights() {
-            const insights = [];
-
-            if (sessions.length === 0) return insights;
-
-            const morningHours = sessions.filter(s => {
-                const hour = new Date(s.timestamp).getHours();
-                return hour >= 6 && hour < 12;
-            }).length;
-
-            const afternoonHours = sessions.filter(s => {
-                const hour = new Date(s.timestamp).getHours();
-                return hour >= 12 && hour < 18;
-            }).length;
-
-            if (morningHours > afternoonHours * 1.5) {
-                insights.push('Du er mest produktiv om morgenen');
-            } else if (afternoonHours > morningHours * 1.5) {
-                insights.push('Du arbejder bedst om eftermiddagen');
-            }
-
-            const weekdaySessions = {};
-            sessions.forEach(s => {
-                const day = new Date(s.date).getDay();
-                weekdaySessions[day] = (weekdaySessions[day] || 0) + 1;
-            });
-
-            const minDay = Object.entries(weekdaySessions).sort((a, b) => a[1] - b[1])[0];
-            if (minDay) {
-                const dayNames = ['søndagen', 'mandagen', 'tirsdagen', 'onsdagen', 'torsdagen', 'fredagen', 'lørdagen'];
-                insights.push(`Du misser mest aktivitet om ${dayNames[minDay[0]]}`);
-            }
-
-            const totalPoints = sessions.reduce((sum, s) => sum + s.points, 0);
-            const avgPoints = totalPoints / Math.max(sessions.length, 1);
-            if (avgPoints > 8) {
-                insights.push('Du er utrolig konsekvent! Fortsæt sådan!');
-            }
-
-            return insights;
         }
 
         // ===== INITIALIZE APP =====
