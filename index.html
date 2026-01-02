@@ -1136,12 +1136,18 @@
             <form id="manualEntryForm" onsubmit="saveManualEntry(event)">
                 <div class="form-group">
                     <label>Vane</label>
-                    <select id="manualHabit" required></select>
+                    <select id="manualHabit" required onchange="updateManualEntryType()"></select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" id="manualDurationGroup">
                     <label>Varighed (min)</label>
-                    <input type="number" id="manualDuration" min="1" required>
+                    <input type="number" id="manualDuration" min="1">
+                </div>
+
+                <div id="manualCheckGroup" style="display: none;">
+                    <div class="motivation-box">
+                        <p>Marker denne aktivitet som gennemført</p>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -1600,6 +1606,7 @@
             const day = String(today.getDate()).padStart(2, '0');
             document.getElementById('manualDate').value = `${year}-${month}-${day}`;
 
+            updateManualEntryType();
             document.getElementById('manualEntryModal').classList.add('active');
         }
 
@@ -2122,6 +2129,27 @@
             editingDayDate = null;
         }
 
+        function updateManualEntryType() {
+            const habitId = document.getElementById('manualHabit').value;
+            const habit = habits.find(h => h.id === habitId);
+
+            if (!habit) return;
+
+            const durationGroup = document.getElementById('manualDurationGroup');
+            const checkGroup = document.getElementById('manualCheckGroup');
+            const durationInput = document.getElementById('manualDuration');
+
+            if (habit.unit === 'timer') {
+                durationGroup.style.display = 'block';
+                checkGroup.style.display = 'none';
+                durationInput.required = true;
+            } else {
+                durationGroup.style.display = 'none';
+                checkGroup.style.display = 'block';
+                durationInput.required = false;
+            }
+        }
+
         function openManualEntry() {
             const habitSelect = document.getElementById('manualHabit');
             habitSelect.innerHTML = habits.map(h =>
@@ -2129,6 +2157,7 @@
             ).join('');
 
             document.getElementById('manualDate').value = editingDayDate;
+            updateManualEntryType();
             document.getElementById('manualEntryModal').classList.add('active');
         }
 
@@ -2136,10 +2165,20 @@
             event.preventDefault();
 
             const habitId = document.getElementById('manualHabit').value;
-            const duration = parseInt(document.getElementById('manualDuration').value);
+            const habit = habits.find(h => h.id === habitId);
             const date = document.getElementById('manualDate').value;
 
-            const points = duration >= 60 ? 10 : duration >= 30 ? 8 : duration >= 15 ? 7 : 5;
+            let duration;
+            let points;
+
+            if (habit.unit === 'timer') {
+                duration = parseInt(document.getElementById('manualDuration').value);
+                points = duration >= 60 ? 10 : duration >= 30 ? 8 : duration >= 15 ? 7 : 5;
+            } else {
+                // For "dage" and "gange" - just mark as completed with a standard duration
+                duration = 1;
+                points = 10; // Full points for completing
+            }
 
             const session = {
                 id: Date.now().toString(),
