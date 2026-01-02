@@ -862,6 +862,27 @@
         </button>
     </nav>
 
+    <!-- HABIT CHOICE MODAL -->
+    <div id="habitChoiceModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeHabitChoiceModal()">×</button>
+            <h2 id="choiceHabitName">Vælg handling</h2>
+
+            <div class="motivation-box" id="choiceMotivation">
+                <p></p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 30px;">
+                <button class="btn btn-primary" onclick="openManualLogFromChoice()" style="padding: 20px; font-size: 18px;">
+                    ✓ Jeg har trænet
+                </button>
+                <button class="btn btn-secondary" onclick="openTimerFromChoice()" style="padding: 20px; font-size: 18px;">
+                    ▶ Jeg skal træne
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- TIMER MODAL -->
     <div id="timerModal" class="modal">
         <div class="modal-content">
@@ -1203,14 +1224,14 @@
             const streak = calculateHabitStreak(habit);
 
             card.innerHTML = `
-                <div class="habit-header" onclick="openTimerModal('${habit.id}')">
+                <div class="habit-header" onclick="openHabitChoiceModal('${habit.id}')">
                     <div class="habit-icon">${habit.icon}</div>
                     <div class="habit-info">
                         <h3>${habit.name}</h3>
                         <div class="habit-why">"${habit.why}"</div>
                     </div>
                 </div>
-                <div class="habit-progress" onclick="openTimerModal('${habit.id}')">
+                <div class="habit-progress" onclick="openHabitChoiceModal('${habit.id}')">
                     <div class="progress-label">
                         <span>${progress.current}/${habit.goal} ${habit.unit}</span>
                         <span>${Math.min(Math.round(progress.percentage), 100)}%</span>
@@ -1222,12 +1243,10 @@
                 <div class="habit-streak">
                     🔥 ${streak} dage streak
                 </div>
-                ${!habit.isDefault ? `
-                    <div class="habit-actions">
-                        <button onclick="editHabit('${habit.id}'); event.stopPropagation();">Rediger</button>
-                        <button class="delete-btn" onclick="deleteHabit('${habit.id}'); event.stopPropagation();">Slet</button>
-                    </div>
-                ` : ''}
+                <div class="habit-actions">
+                    <button onclick="editHabit('${habit.id}'); event.stopPropagation();">Rediger</button>
+                    <button class="delete-btn" onclick="deleteHabit('${habit.id}'); event.stopPropagation();">Slet</button>
+                </div>
             `;
 
             return card;
@@ -1278,6 +1297,79 @@
             }
 
             return streak;
+        }
+
+        // ===== HABIT CHOICE MODAL =====
+        function openHabitChoiceModal(habitId) {
+            currentHabitId = habitId;
+            const habit = habits.find(h => h.id === habitId);
+
+            document.getElementById('choiceHabitName').textContent = habit.name + ' ' + habit.icon;
+            document.getElementById('choiceMotivation').querySelector('p').textContent = habit.why;
+
+            // Update button text based on habit name
+            const hasButton = document.querySelector('#habitChoiceModal .btn-primary');
+            const willButton = document.querySelector('#habitChoiceModal .btn-secondary');
+
+            const verbPastTense = getHabitVerbPastTense(habit.name);
+            const verbFuture = getHabitVerbFuture(habit.name);
+
+            hasButton.innerHTML = `✓ Jeg har ${verbPastTense}`;
+            willButton.innerHTML = `▶ Jeg skal ${verbFuture}`;
+
+            document.getElementById('habitChoiceModal').classList.add('active');
+        }
+
+        function closeHabitChoiceModal() {
+            document.getElementById('habitChoiceModal').classList.remove('active');
+        }
+
+        function getHabitVerbPastTense(habitName) {
+            const verbs = {
+                'Træning': 'trænet',
+                'Matematik Studie': 'studeret',
+                'Madlavning': 'lavet mad',
+                'Kæreste Tid': 'haft kærestetid'
+            };
+            return verbs[habitName] || 'gjort det';
+        }
+
+        function getHabitVerbFuture(habitName) {
+            const verbs = {
+                'Træning': 'træne',
+                'Matematik Studie': 'studere',
+                'Madlavning': 'lave mad',
+                'Kæreste Tid': 'have kærestetid'
+            };
+            return verbs[habitName] || 'gøre det';
+        }
+
+        function openManualLogFromChoice() {
+            closeHabitChoiceModal();
+            openManualEntryForCurrentHabit();
+        }
+
+        function openTimerFromChoice() {
+            closeHabitChoiceModal();
+            openTimerModal(currentHabitId);
+        }
+
+        function openManualEntryForCurrentHabit() {
+            const habit = habits.find(h => h.id === currentHabitId);
+
+            const habitSelect = document.getElementById('manualHabit');
+            habitSelect.innerHTML = habits.map(h =>
+                `<option value="${h.id}" ${h.id === currentHabitId ? 'selected' : ''}>${h.icon} ${h.name}</option>`
+            ).join('');
+
+            // Set today's date
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            document.getElementById('manualDate').value = `${year}-${month}-${day}`;
+
+            document.getElementById('manualEntryModal').classList.add('active');
         }
 
         // ===== TIMER MODAL =====
@@ -1547,12 +1639,11 @@
 
         function deleteHabit(habitId) {
             const habit = habits.find(h => h.id === habitId);
-            if (habit && habit.isDefault) {
-                alert('Standard vaner kan ikke slettes');
-                return;
-            }
+            const confirmMessage = habit && habit.isDefault
+                ? `Er du sikker på du vil slette "${habit.name}"? Dette er en standard vane, men du kan altid tilføje den igen.`
+                : 'Er du sikker på du vil slette denne vane?';
 
-            if (confirm('Er du sikker på du vil slette denne vane?')) {
+            if (confirm(confirmMessage)) {
                 habits = habits.filter(h => h.id !== habitId);
                 sessions = sessions.filter(s => s.habitId !== habitId);
                 saveData();
