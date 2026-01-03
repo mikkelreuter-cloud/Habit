@@ -820,6 +820,80 @@
             color: var(--text-primary);
         }
 
+        /* Today Page */
+        .today-habit-card {
+            background: var(--bg-card);
+            padding: 24px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .today-habit-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .today-habit-icon {
+            font-size: 48px;
+        }
+
+        .today-habit-info h3 {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .today-habit-goal {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .today-complete-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--accent);
+            color: var(--bg-card);
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .today-complete-btn:active {
+            opacity: 0.8;
+        }
+
+        .today-complete-btn.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        /* Confetti Animation */
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
         /* Responsive improvements */
         @media (max-width: 600px) {
             .stats-bar {
@@ -875,8 +949,31 @@
     </header>
 
     <div class="container">
+        <!-- I DAG PAGE -->
+        <div id="today" class="page-section active">
+            <h2 class="page-title">I Dag</h2>
+
+            <!-- Completion Ring -->
+            <div style="display: flex; justify-content: center; margin: 30px 0;">
+                <div style="position: relative; width: 200px; height: 200px;">
+                    <svg width="200" height="200" style="transform: rotate(-90deg);">
+                        <circle cx="100" cy="100" r="90" fill="none" stroke="var(--accent-light)" stroke-width="12"/>
+                        <circle id="progressCircle" cx="100" cy="100" r="90" fill="none" stroke="var(--accent)" stroke-width="12"
+                                stroke-dasharray="565.48" stroke-dashoffset="565.48" stroke-linecap="round"/>
+                    </svg>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                        <div style="font-size: 48px; font-family: 'Lora', serif; font-weight: 600;" id="todayPercentage">0%</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">af dagens mål</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Habits -->
+            <div id="todayHabitsList"></div>
+        </div>
+
         <!-- DASHBOARD PAGE -->
-        <div id="dashboard" class="page-section active">
+        <div id="dashboard" class="page-section">
             <div class="stats-bar">
                 <div class="stat-card">
                     <div class="stat-value" id="totalPoints">0</div>
@@ -956,7 +1053,11 @@
 
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
-        <button class="nav-btn active" onclick="showPage('dashboard')">
+        <button class="nav-btn active" onclick="showPage('today')">
+            <span class="nav-icon">☀</span>
+            <span>I dag</span>
+        </button>
+        <button class="nav-btn" onclick="showPage('dashboard')">
             <span class="nav-icon">⌂</span>
             <span>Hjem</span>
         </button>
@@ -1259,10 +1360,77 @@
         // ===== INITIALIZATION =====
         function initApp() {
             loadData();
+            renderTodayPage(); // Start on "I DAG" page
             renderDashboard();
             renderCalendar();
             renderStatistics();
             requestNotificationPermission();
+            checkForPrompts();
+        }
+
+        function checkForPrompts() {
+            const now = new Date();
+            const dayOfWeek = now.getDay();
+            const hour = now.getHours();
+
+            // Check last prompt date
+            const lastPrompt = localStorage.getItem('momentum_lastPrompt');
+            const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+            if (lastPrompt === today) {
+                return; // Already showed prompt today
+            }
+
+            // Sunday Fresh Start prompt
+            if (dayOfWeek === 0) { // Sunday
+                setTimeout(() => {
+                    if (confirm('🌅 Ny uge i morgen!\n\nVil du tage et øjeblik at reflektere over ugen der gik og planlægge næste uge?')) {
+                        showWeeklyReview();
+                    }
+                    localStorage.setItem('momentum_lastPrompt', today);
+                }, 1000);
+            }
+            // Morning intention (6 AM - 11 AM, not Sunday)
+            else if (hour >= 6 && hour < 11) {
+                setTimeout(() => {
+                    showMorningIntention();
+                    localStorage.setItem('momentum_lastPrompt', today);
+                }, 500);
+            }
+        }
+
+        function showWeeklyReview() {
+            const message = `
+Refleksion over ugen:
+- Hvad gik godt?
+- Hvad var udfordrende?
+- Hvad vil du fokusere på næste uge?
+
+Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
+            `.trim();
+
+            alert(message);
+
+            // Navigate to statistics
+            showPage('statistics');
+        }
+
+        function showMorningIntention() {
+            // Get today's habits
+            const todaysHabits = habits.filter(h => getTodaysGoal(h) > 0);
+
+            if (todaysHabits.length === 0) {
+                return; // No habits today
+            }
+
+            let habitsList = 'Dine vaner i dag:\n\n';
+            todaysHabits.forEach((h, i) => {
+                habitsList += `${i + 1}. ${h.icon} ${h.name}\n`;
+            });
+
+            const message = `☀️ God morgen!\n\n${habitsList}\nHvad er dit #1 fokus i dag?`;
+
+            alert(message);
         }
 
         function requestNotificationPermission() {
@@ -1304,8 +1472,204 @@
             document.getElementById(page).classList.add('active');
             event.target.closest('.nav-btn').classList.add('active');
 
+            if (page === 'today') renderTodayPage();
             if (page === 'calendar') renderCalendar();
             if (page === 'statistics') renderStatistics();
+        }
+
+        // ===== I DAG (TODAY) PAGE =====
+        const COMPLETION_MESSAGES = [
+            "Du er fantastisk! 🌟",
+            "Fremragende arbejde!",
+            "Du gør fremskridt hver dag!",
+            "Stærkt klaret! 💪",
+            "Du tager ansvar - det er smukt!",
+            "Små skridt, stor forskel!",
+            "Du investerer i dig selv!",
+            "Godt gået - du gør hvad du sagde!",
+            "Du bygger dine vaner op! 🎯",
+            "Hver dag tæller - og du klarer det!"
+        ];
+
+        function renderTodayPage() {
+            updateTodayCompletionRing();
+            renderTodayHabitsList();
+        }
+
+        function updateTodayCompletionRing() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const todayStr = `${year}-${month}-${day}`;
+
+            let totalGoals = 0;
+            let totalCompleted = 0;
+
+            habits.forEach(habit => {
+                const todaysGoal = getTodaysGoal(habit);
+                if (todaysGoal > 0) {
+                    totalGoals++;
+                    const progress = calculateDailyProgress(habit);
+                    if (progress.completed) {
+                        totalCompleted++;
+                    }
+                }
+            });
+
+            const percentage = totalGoals > 0 ? Math.round((totalCompleted / totalGoals) * 100) : 0;
+
+            // Update percentage text
+            document.getElementById('todayPercentage').textContent = percentage + '%';
+
+            // Update circle (565.48 is the circumference of a circle with r=90)
+            const circumference = 565.48;
+            const offset = circumference - (percentage / 100) * circumference;
+            document.getElementById('progressCircle').style.strokeDashoffset = offset;
+        }
+
+        function renderTodayHabitsList() {
+            const container = document.getElementById('todayHabitsList');
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const todayStr = `${year}-${month}-${day}`;
+
+            let html = '';
+
+            habits.forEach(habit => {
+                const todaysGoal = getTodaysGoal(habit);
+                if (todaysGoal === 0) return; // Skip if no goal today
+
+                const progress = calculateDailyProgress(habit);
+                const isCompleted = progress.completed;
+
+                let buttonText = '';
+                let buttonClass = isCompleted ? 'today-complete-btn completed' : 'today-complete-btn';
+
+                if (habit.unit === 'timer') {
+                    buttonText = isCompleted
+                        ? `✓ Fuldført (${progress.current}/${todaysGoal} timer)`
+                        : `${progress.current}/${todaysGoal} timer - Klik for at logge tid`;
+                } else {
+                    buttonText = isCompleted
+                        ? `✓ Fuldført for i dag!`
+                        : `Marker som gennemført`;
+                }
+
+                html += `
+                    <div class="today-habit-card">
+                        <div class="today-habit-header">
+                            <div class="today-habit-icon">${habit.icon}</div>
+                            <div class="today-habit-info" style="flex: 1;">
+                                <h3>${habit.name}</h3>
+                                <div class="today-habit-goal">Mål i dag: ${todaysGoal} ${habit.unit}</div>
+                            </div>
+                        </div>
+                        <button class="${buttonClass}" onclick="completeTodayHabit('${habit.id}')">
+                            ${buttonText}
+                        </button>
+                    </div>
+                `;
+            });
+
+            if (html === '') {
+                html = '<div class="empty-state"><h3>Ingen mål i dag</h3><p>Du har ingen vaner planlagt for i dag. Nyd din fridag! 🌅</p></div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        function completeTodayHabit(habitId) {
+            const habit = habits.find(h => h.id === habitId);
+            if (!habit) return;
+
+            if (habit.unit === 'timer') {
+                // For timer habits, open manual entry modal
+                currentHabitId = habitId;
+                openManualEntryForCurrentHabit();
+            } else {
+                // For dage/gange, mark as completed
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                const dateStr = `${year}-${month}-${day}`;
+
+                // Check if already completed
+                const existing = sessions.find(s => s.habitId === habitId && s.date === dateStr);
+                if (existing) {
+                    alert('Du har allerede fuldført denne vane i dag! 🎉');
+                    return;
+                }
+
+                const session = {
+                    id: Date.now().toString(),
+                    habitId: habitId,
+                    date: dateStr,
+                    timestamp: new Date().toISOString(),
+                    duration: 1,
+                    pomodoros: 0,
+                    points: 10,
+                    manual: true
+                };
+
+                sessions.push(session);
+                saveData();
+
+                // Show confetti and message
+                showConfetti();
+                showCompletionMessage();
+
+                // Update displays
+                renderTodayPage();
+                renderDashboard();
+            }
+        }
+
+        function showConfetti() {
+            const colors = ['#2d2d2d', '#666666', '#999999', '#d0cdc7'];
+            const confettiCount = 50;
+
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+                confetti.style.animation = 'confetti-fall linear forwards';
+
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+
+        function showCompletionMessage() {
+            const message = COMPLETION_MESSAGES[Math.floor(Math.random() * COMPLETION_MESSAGES.length)];
+
+            // Create temporary message element
+            const messageEl = document.createElement('div');
+            messageEl.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: var(--accent);
+                color: var(--bg-card);
+                padding: 24px 32px;
+                font-size: 20px;
+                font-weight: 600;
+                border-radius: 8px;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            `;
+            messageEl.textContent = message;
+            document.body.appendChild(messageEl);
+
+            setTimeout(() => messageEl.remove(), 2000);
         }
 
         // ===== DASHBOARD =====
@@ -2194,10 +2558,19 @@
             sessions.push(session);
             saveData();
 
+            // Show celebration
+            showConfetti();
+            showCompletionMessage();
+
             closeManualEntryModal();
-            renderDayDetails(editingDayDate);
+            if (editingDayDate) renderDayDetails(editingDayDate);
             renderDashboard();
             renderStatistics();
+
+            // Update today page if visible
+            if (document.getElementById('today').classList.contains('active')) {
+                renderTodayPage();
+            }
         }
 
         function closeManualEntryModal() {
