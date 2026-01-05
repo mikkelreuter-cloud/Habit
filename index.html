@@ -3059,66 +3059,88 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
 
         function renderTimeBudgetTable() {
             const container = document.getElementById('timeBudgetTable');
-            const dayNames = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn'];
+            const dayNames = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag'];
             const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-            let html = '<table class="heatmap-table"><thead><tr>';
-            html += '<th>Kategori</th>';
-            dayNames.forEach(day => html += `<th>${day}</th>`);
-            html += '<th>Handlinger</th></tr></thead><tbody>';
+            let html = '';
 
-            // Render each category
-            timeCategories.forEach(cat => {
-                html += '<tr>';
-                html += `<td class="habit-name">${cat.icon} ${cat.name}</td>`;
-                dayKeys.forEach(day => {
-                    const hours = cat.hours[day] || 0;
-                    html += `<td style="text-align: center;">${hours}h</td>`;
-                });
-                html += `<td style="text-align: center;">
-                    <button class="icon-btn" onclick="editTimeCategory('${cat.id}')" title="Rediger">✏️</button>
-                    <button class="icon-btn" onclick="deleteTimeCategory('${cat.id}')" title="Slet">🗑️</button>
-                </td>`;
-                html += '</tr>';
-            });
-
-            // Add totals row
-            html += '<tr style="font-weight: 600; background: var(--accent-light);">';
-            html += '<td>📊 Total Forbrug</td>';
-            dayKeys.forEach(day => {
-                const total = timeCategories.reduce((sum, cat) => sum + (cat.hours[day] || 0), 0);
-                html += `<td style="text-align: center;">${total}h</td>`;
-            });
-            html += '<td></td></tr>';
-
-            // Add habits row
-            html += '<tr style="font-weight: 600; background: #fff3cd;">';
-            html += '<td>🎯 Planlagte Vaner</td>';
+            // Render each day as a card
             dayKeys.forEach((day, i) => {
-                const habitHours = habits.reduce((sum, h) => {
-                    const goal = h.weeklyPlan ? h.weeklyPlan[day] : 0;
-                    return sum + goal;
-                }, 0);
-                html += `<td style="text-align: center;">${habitHours}h</td>`;
-            });
-            html += '<td></td></tr>';
-
-            // Add free time row
-            html += '<tr style="font-weight: 600; background: #d4edda;">';
-            html += '<td>✅ Ledig Tid</td>';
-            dayKeys.forEach(day => {
                 const committed = timeCategories.reduce((sum, cat) => sum + (cat.hours[day] || 0), 0);
                 const habitHours = habits.reduce((sum, h) => {
                     const goal = h.weeklyPlan ? h.weeklyPlan[day] : 0;
                     return sum + goal;
                 }, 0);
                 const free = 24 - committed - habitHours;
-                const color = free < 0 ? 'color: #721c24;' : '';
-                html += `<td style="text-align: center; ${color}">${free}h</td>`;
-            });
-            html += '<td></td></tr>';
 
-            html += '</tbody></table>';
+                // Calculate percentages for visual bars
+                const committedPercent = (committed / 24) * 100;
+                const habitsPercent = (habitHours / 24) * 100;
+                const freePercent = (free / 24) * 100;
+
+                // Color for free time
+                const freeColor = free < 0 ? '#f8d7da' : free < 2 ? '#fff3cd' : '#d4edda';
+                const freeTextColor = free < 0 ? '#721c24' : free < 2 ? '#856404' : '#155724';
+
+                html += `
+                    <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 16px; margin-bottom: 12px;">
+                        <h4 style="margin: 0 0 12px 0; font-size: 16px;">${dayNames[i]}</h4>
+
+                        <!-- Visual bar -->
+                        <div style="height: 24px; display: flex; border: 1px solid var(--border); overflow: hidden; margin-bottom: 12px;">
+                            <div style="background: #666; width: ${committedPercent}%; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 600;" title="Forpligtelser: ${committed}h">
+                                ${committed > 0 ? committed + 'h' : ''}
+                            </div>
+                            <div style="background: var(--accent); width: ${habitsPercent}%; display: flex; align-items: center; justify-content: center; color: var(--bg-card); font-size: 11px; font-weight: 600;" title="Vaner: ${habitHours}h">
+                                ${habitHours > 0 ? habitHours + 'h' : ''}
+                            </div>
+                            <div style="background: ${freeColor}; width: ${freePercent}%; display: flex; align-items: center; justify-content: center; color: ${freeTextColor}; font-size: 11px; font-weight: 600;" title="Ledig: ${free}h">
+                                ${free}h
+                            </div>
+                        </div>
+
+                        <!-- Categories list -->
+                        <div style="font-size: 13px; color: var(--text-secondary);">
+                            ${timeCategories.filter(cat => cat.hours[day] > 0).map(cat =>
+                                `<div style="display: flex; justify-content: space-between; margin: 4px 0;">
+                                    <span>${cat.icon} ${cat.name}</span>
+                                    <span style="font-weight: 500;">${cat.hours[day]}h</span>
+                                </div>`
+                            ).join('')}
+                            ${timeCategories.filter(cat => cat.hours[day] > 0).length > 0 ? '<hr style="margin: 8px 0; border: none; border-top: 1px solid var(--border);">' : ''}
+                            <div style="display: flex; justify-content: space-between; margin: 4px 0; font-weight: 600;">
+                                <span>📊 Total forbrug</span>
+                                <span>${committed}h</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 4px 0; font-weight: 600; color: var(--accent);">
+                                <span>🎯 Planlagte vaner</span>
+                                <span>${habitHours}h</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 4px 0; font-weight: 600; color: ${freeTextColor};">
+                                <span>✅ Ledig tid</span>
+                                <span>${free}h</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Add category management section
+            html += `
+                <div style="background: var(--accent-light); border: 1px solid var(--border); padding: 16px; margin-top: 20px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 16px;">Dine Tidskategorier</h4>
+                    ${timeCategories.map(cat => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 8px 0; padding: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+                            <span style="font-weight: 500;">${cat.icon} ${cat.name}</span>
+                            <div>
+                                <button class="icon-btn" onclick="editTimeCategory('${cat.id}')" title="Rediger">✏️</button>
+                                <button class="icon-btn" onclick="deleteTimeCategory('${cat.id}')" title="Slet">🗑️</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
             container.innerHTML = html;
         }
 
