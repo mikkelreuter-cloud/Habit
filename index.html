@@ -1329,49 +1329,70 @@
                     <label>Tidspunkter per dag (angiv start og slut)</label>
                     <div style="display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 8px;">
                         <div>
-                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Mandag</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Mandag</label>
+                                <button type="button" onclick="copyDayToAll('Monday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                 <input type="time" id="catMondayStart" style="width: 100%; padding: 8px;">
                                 <input type="time" id="catMondayEnd" style="width: 100%; padding: 8px;">
                             </div>
                         </div>
                         <div>
-                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Tirsdag</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Tirsdag</label>
+                                <button type="button" onclick="copyDayToAll('Tuesday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                 <input type="time" id="catTuesdayStart" style="width: 100%; padding: 8px;">
                                 <input type="time" id="catTuesdayEnd" style="width: 100%; padding: 8px;">
                             </div>
                         </div>
                         <div>
-                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Onsdag</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Onsdag</label>
+                                <button type="button" onclick="copyDayToAll('Wednesday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                 <input type="time" id="catWednesdayStart" style="width: 100%; padding: 8px;">
                                 <input type="time" id="catWednesdayEnd" style="width: 100%; padding: 8px;">
                             </div>
                         </div>
                         <div>
-                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Torsdag</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Torsdag</label>
+                                <button type="button" onclick="copyDayToAll('Thursday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                 <input type="time" id="catThursdayStart" style="width: 100%; padding: 8px;">
                                 <input type="time" id="catThursdayEnd" style="width: 100%; padding: 8px;">
                             </div>
                         </div>
                         <div>
-                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Fredag</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Fredag</label>
+                                <button type="button" onclick="copyDayToAll('Friday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                 <input type="time" id="catFridayStart" style="width: 100%; padding: 8px;">
                                 <input type="time" id="catFridayEnd" style="width: 100%; padding: 8px;">
                             </div>
                         </div>
                         <div>
-                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Lørdag</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Lørdag</label>
+                                <button type="button" onclick="copyDayToAll('Saturday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                 <input type="time" id="catSaturdayStart" style="width: 100%; padding: 8px;">
                                 <input type="time" id="catSaturdayEnd" style="width: 100%; padding: 8px;">
                             </div>
                         </div>
                         <div>
-                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Søndag</label>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Søndag</label>
+                                <button type="button" onclick="copyDayToAll('Sunday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                 <input type="time" id="catSundayStart" style="width: 100%; padding: 8px;">
                                 <input type="time" id="catSundayEnd" style="width: 100%; padding: 8px;">
@@ -3288,6 +3309,26 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
             }
 
             document.getElementById('timeBudgetInsights').innerHTML = insights.map(i => `<li>${i}</li>`).join('');
+        }
+
+        function copyDayToAll(sourceDay) {
+            const startId = `cat${sourceDay}Start`;
+            const endId = `cat${sourceDay}End`;
+            const startTime = document.getElementById(startId).value;
+            const endTime = document.getElementById(endId).value;
+
+            if (!startTime && !endTime) {
+                alert('Angiv venligst start- og sluttidspunkt først!');
+                return;
+            }
+
+            const allDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            allDays.forEach(day => {
+                if (day !== sourceDay) {
+                    document.getElementById(`cat${day}Start`).value = startTime;
+                    document.getElementById(`cat${day}End`).value = endTime;
+                }
+            });
         }
 
         function openAddCategoryModal() {
