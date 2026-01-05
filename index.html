@@ -2750,32 +2750,40 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
                 return;
             }
 
-            const dayNames = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn'];
+            const dayNames = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag'];
             const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
             // Get current week dates
             const weekDates = getCurrentWeekDates();
 
-            let html = '<table class="heatmap-table"><thead><tr>';
-            html += '<th>Vane</th>';
-            dayNames.forEach((day, i) => {
+            let html = '';
+
+            // Render each day as a card
+            dayKeys.forEach((dayKey, i) => {
                 const date = new Date(weekDates[i]);
-                html += `<th>${day}<br><small>${date.getDate()}/${date.getMonth() + 1}</small></th>`;
-            });
-            html += '</tr></thead><tbody>';
+                const dateStr = weekDates[i];
 
-            habits.forEach(habit => {
-                html += '<tr>';
-                html += `<td class="habit-name">${habit.icon} ${habit.name}</td>`;
+                html += `
+                    <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 16px; margin-bottom: 12px;">
+                        <h4 style="margin: 0 0 12px 0; font-size: 16px;">
+                            ${dayNames[i]}
+                            <span style="font-weight: 400; color: var(--text-secondary); font-size: 14px;">
+                                ${date.getDate()}/${date.getMonth() + 1}
+                            </span>
+                        </h4>
 
-                dayKeys.forEach((dayKey, i) => {
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px;">
+                `;
+
+                // Render each habit for this day
+                habits.forEach(habit => {
                     const goal = habit.weeklyPlan ? habit.weeklyPlan[dayKey] : 0;
-                    const dateStr = weekDates[i];
                     const progress = calculateDayProgress(habit, dateStr);
 
                     let cellClass = 'no-goal';
                     let icon = '-';
-                    let progressText = '';
+                    let bgColor = 'var(--accent-light)';
+                    let textColor = 'var(--text-secondary)';
 
                     if (goal > 0) {
                         const percentage = (progress.current / goal) * 100;
@@ -2783,30 +2791,42 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
                         if (percentage >= 100) {
                             cellClass = 'success';
                             icon = '✓';
+                            bgColor = '#d4edda';
+                            textColor = '#155724';
                         } else if (percentage >= 50) {
                             cellClass = 'partial';
                             icon = '○';
+                            bgColor = '#fff3cd';
+                            textColor = '#856404';
                         } else if (progress.current > 0) {
                             cellClass = 'partial';
                             icon = '○';
+                            bgColor = '#fff3cd';
+                            textColor = '#856404';
                         } else {
                             cellClass = 'failure';
                             icon = '✗';
+                            bgColor = '#f8d7da';
+                            textColor = '#721c24';
                         }
-
-                        progressText = `${progress.current}/${goal}`;
                     }
 
-                    html += `<td><div class="heatmap-cell ${cellClass}">
-                        <span class="heatmap-icon">${icon}</span>
-                        <span class="heatmap-progress">${progressText}</span>
-                    </div></td>`;
+                    html += `
+                        <div style="background: ${bgColor}; padding: 12px; text-align: center; border: 1px solid var(--border); min-height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <div style="font-size: 20px; margin-bottom: 4px;">${habit.icon}</div>
+                            <div style="font-size: 11px; font-weight: 600; color: ${textColor}; margin-bottom: 2px;">${habit.name}</div>
+                            <div style="font-size: 16px; font-weight: 600; color: ${textColor};">${icon}</div>
+                            ${goal > 0 ? `<div style="font-size: 10px; color: ${textColor}; margin-top: 2px;">${progress.current}/${goal}</div>` : ''}
+                        </div>
+                    `;
                 });
 
-                html += '</tr>';
+                html += `
+                        </div>
+                    </div>
+                `;
             });
 
-            html += '</tbody></table>';
             container.innerHTML = html;
         }
 
