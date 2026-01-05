@@ -1440,24 +1440,62 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
         }
 
         function loadData() {
-            const savedHabits = localStorage.getItem('momentum_habits');
-            const savedSessions = localStorage.getItem('momentum_sessions');
+            try {
+                // Try localStorage first
+                const savedHabits = localStorage.getItem('momentum_habits');
+                const savedSessions = localStorage.getItem('momentum_sessions');
 
-            if (savedHabits) {
-                habits = JSON.parse(savedHabits);
-            } else {
+                if (savedHabits) {
+                    habits = JSON.parse(savedHabits);
+                } else {
+                    // Fallback: Try cookie backup
+                    const backupCookie = document.cookie.split('; ').find(row => row.startsWith('momentum_backup='));
+                    if (backupCookie) {
+                        const backup = JSON.parse(decodeURIComponent(backupCookie.split('=')[1]));
+                        habits = backup.habits || [...DEFAULT_HABITS];
+                        sessions = backup.sessions || [];
+                        console.log('✅ Gendannet fra backup');
+                        saveData(); // Re-save to localStorage
+                    } else {
+                        habits = [...DEFAULT_HABITS];
+                    }
+                }
+
+                if (savedSessions) {
+                    sessions = JSON.parse(savedSessions);
+                } else if (!savedHabits) {
+                    sessions = [];
+                }
+
+                console.log(`✅ Loaded: ${habits.length} vaner, ${sessions.length} sessioner`);
+            } catch (e) {
+                console.error('❌ Load error:', e);
                 habits = [...DEFAULT_HABITS];
-                saveData();
-            }
-
-            if (savedSessions) {
-                sessions = JSON.parse(savedSessions);
+                sessions = [];
             }
         }
 
         function saveData() {
-            localStorage.setItem('momentum_habits', JSON.stringify(habits));
-            localStorage.setItem('momentum_sessions', JSON.stringify(sessions));
+            try {
+                // Primary: localStorage
+                localStorage.setItem('momentum_habits', JSON.stringify(habits));
+                localStorage.setItem('momentum_sessions', JSON.stringify(sessions));
+
+                // Backup: Save to cookie (max 4KB, so only recent data)
+                const backup = {
+                    habits: habits,
+                    sessions: sessions.slice(-50), // Only last 50 sessions
+                    timestamp: new Date().toISOString()
+                };
+                const expiryDate = new Date();
+                expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+                document.cookie = `momentum_backup=${encodeURIComponent(JSON.stringify(backup))}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax`;
+
+                console.log('✅ Data gemt:', habits.length, 'vaner,', sessions.length, 'sessioner');
+            } catch (e) {
+                console.error('❌ Kunne ikke gemme:', e);
+                alert('⚠️ Kunne ikke gemme data!\n\nEr du i inkognito mode?\nPrøv at installere appen som PWA.');
+            }
         }
 
         // ===== NAVIGATION =====
