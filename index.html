@@ -1049,17 +1049,61 @@
                 </div>
             </div>
         </div>
+
+        <!-- TIME BUDGET PAGE -->
+        <div id="timebudget" class="page-section">
+            <h2 class="page-title">Tid Budget</h2>
+
+            <!-- Summary Cards -->
+            <div class="stats-grid" style="margin-bottom: 24px;">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalCommitted">19h</div>
+                    <div class="stat-label">Faste forpligtelser</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalHabits">3h</div>
+                    <div class="stat-label">Planlagte vaner</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalFree">2h</div>
+                    <div class="stat-label">Ledig tid</div>
+                </div>
+            </div>
+
+            <!-- Time Budget Table -->
+            <div class="chart-card" style="margin-bottom: 20px;">
+                <h3>Ugentlig Tidsoversigt</h3>
+                <div id="timeBudgetTable" style="overflow-x: auto;"></div>
+            </div>
+
+            <!-- Add Category Button -->
+            <button class="btn btn-primary" onclick="openAddCategoryModal()" style="width: 100%; margin-bottom: 12px;">
+                + Tilføj Tidskategori
+            </button>
+
+            <!-- Warnings/Insights -->
+            <div class="chart-card">
+                <h3>⚠️ Advarsler & Indsigter</h3>
+                <ul class="insights-list" id="timeBudgetInsights">
+                    <li>Udfyld dine tidskategorier for at se indsigter</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
-        <button class="nav-btn active" onclick="showPage('today')">
+        <button class="nav-btn" onclick="showPage('today')">
             <span class="nav-icon">☀</span>
             <span>I dag</span>
         </button>
-        <button class="nav-btn" onclick="showPage('dashboard')">
+        <button class="nav-btn active" onclick="showPage('dashboard')">
             <span class="nav-icon">⌂</span>
             <span>Hjem</span>
+        </button>
+        <button class="nav-btn" onclick="showPage('timebudget')">
+            <span class="nav-icon">⏰</span>
+            <span>Tid</span>
         </button>
         <button class="nav-btn" onclick="showPage('calendar')">
             <span class="nav-icon">▦</span>
@@ -1264,6 +1308,65 @@
         </div>
     </div>
 
+    <!-- TIME CATEGORY MODAL -->
+    <div id="timeCategoryModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeTimeCategoryModal()">×</button>
+            <h2 id="timeCategoryModalTitle">Tilføj Tidskategori</h2>
+
+            <form id="timeCategoryForm" onsubmit="saveTimeCategory(event)">
+                <div class="form-group">
+                    <label>Kategori Navn</label>
+                    <input type="text" id="categoryName" required placeholder="fx Søvn, Arbejde, Transport">
+                </div>
+
+                <div class="form-group">
+                    <label>Icon (emoji)</label>
+                    <input type="text" id="categoryIcon" maxlength="2" placeholder="🛏️">
+                </div>
+
+                <div class="form-group">
+                    <label>Timer per dag (kan variere per dag)</label>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 8px;">
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Man</label>
+                            <input type="number" id="catMonday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Tir</label>
+                            <input type="number" id="catTuesday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Ons</label>
+                            <input type="number" id="catWednesday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Tor</label>
+                            <input type="number" id="catThursday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Fre</label>
+                            <input type="number" id="catFriday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Lør</label>
+                            <input type="number" id="catSaturday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                        <div style="text-align: center;">
+                            <label style="font-size: 11px; margin-bottom: 4px;">Søn</label>
+                            <input type="number" id="catSunday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timer-controls">
+                    <button type="submit" class="btn btn-primary">Gem</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeTimeCategoryModal()">Annuller</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // ===== DATA STRUCTURE =====
         const DEFAULT_HABITS = [
@@ -1340,6 +1443,26 @@
         // ===== STATE =====
         let habits = [];
         let sessions = [];
+        let timeCategories = [
+            {
+                id: 'sleep',
+                name: 'Søvn',
+                icon: '🛏️',
+                hours: { monday: 8, tuesday: 8, wednesday: 8, thursday: 8, friday: 8, saturday: 9, sunday: 9 }
+            },
+            {
+                id: 'work',
+                name: 'Arbejde',
+                icon: '💼',
+                hours: { monday: 8, tuesday: 8, wednesday: 8, thursday: 8, friday: 8, saturday: 0, sunday: 0 }
+            },
+            {
+                id: 'transport',
+                name: 'Transport',
+                icon: '🚗',
+                hours: { monday: 1, tuesday: 1, wednesday: 1, thursday: 1, friday: 1, saturday: 0, sunday: 0 }
+            }
+        ];
         let currentHabitId = null;
         let timerInterval = null;
         let timerState = {
@@ -1444,30 +1567,23 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
                 // Try localStorage first
                 const savedHabits = localStorage.getItem('momentum_habits');
                 const savedSessions = localStorage.getItem('momentum_sessions');
+                const savedCategories = localStorage.getItem('momentum_categories');
 
                 if (savedHabits) {
                     habits = JSON.parse(savedHabits);
                 } else {
-                    // Fallback: Try cookie backup
-                    const backupCookie = document.cookie.split('; ').find(row => row.startsWith('momentum_backup='));
-                    if (backupCookie) {
-                        const backup = JSON.parse(decodeURIComponent(backupCookie.split('=')[1]));
-                        habits = backup.habits || [...DEFAULT_HABITS];
-                        sessions = backup.sessions || [];
-                        console.log('✅ Gendannet fra backup');
-                        saveData(); // Re-save to localStorage
-                    } else {
-                        habits = [...DEFAULT_HABITS];
-                    }
+                    habits = [...DEFAULT_HABITS];
                 }
 
                 if (savedSessions) {
                     sessions = JSON.parse(savedSessions);
-                } else if (!savedHabits) {
-                    sessions = [];
                 }
 
-                console.log(`✅ Loaded: ${habits.length} vaner, ${sessions.length} sessioner`);
+                if (savedCategories) {
+                    timeCategories = JSON.parse(savedCategories);
+                }
+
+                console.log(`✅ Loaded: ${habits.length} vaner, ${sessions.length} sessioner, ${timeCategories.length} kategorier`);
             } catch (e) {
                 console.error('❌ Load error:', e);
                 habits = [...DEFAULT_HABITS];
@@ -1480,18 +1596,20 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
                 // Primary: localStorage
                 localStorage.setItem('momentum_habits', JSON.stringify(habits));
                 localStorage.setItem('momentum_sessions', JSON.stringify(sessions));
+                localStorage.setItem('momentum_categories', JSON.stringify(timeCategories));
 
                 // Backup: Save to cookie (max 4KB, so only recent data)
                 const backup = {
                     habits: habits,
-                    sessions: sessions.slice(-50), // Only last 50 sessions
+                    sessions: sessions.slice(-50),
+                    categories: timeCategories,
                     timestamp: new Date().toISOString()
                 };
                 const expiryDate = new Date();
                 expiryDate.setFullYear(expiryDate.getFullYear() + 1);
                 document.cookie = `momentum_backup=${encodeURIComponent(JSON.stringify(backup))}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax`;
 
-                console.log('✅ Data gemt:', habits.length, 'vaner,', sessions.length, 'sessioner');
+                console.log('✅ Data gemt:', habits.length, 'vaner,', sessions.length, 'sessioner,', timeCategories.length, 'kategorier');
             } catch (e) {
                 console.error('❌ Kunne ikke gemme:', e);
                 alert('⚠️ Kunne ikke gemme data!\n\nEr du i inkognito mode?\nPrøv at installere appen som PWA.');
@@ -1511,6 +1629,7 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
             event.target.closest('.nav-btn').classList.add('active');
 
             if (page === 'today') renderTodayPage();
+            if (page === 'timebudget') renderTimeBudget();
             if (page === 'calendar') renderCalendar();
             if (page === 'statistics') renderStatistics();
         }
@@ -2929,6 +3048,205 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
             }
 
             return longestStreak;
+        }
+
+        // ===== TIME BUDGET =====
+        function renderTimeBudget() {
+            renderTimeBudgetTable();
+            renderTimeBudgetSummary();
+            renderTimeBudgetInsights();
+        }
+
+        function renderTimeBudgetTable() {
+            const container = document.getElementById('timeBudgetTable');
+            const dayNames = ['Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør', 'Søn'];
+            const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+            let html = '<table class="heatmap-table"><thead><tr>';
+            html += '<th>Kategori</th>';
+            dayNames.forEach(day => html += `<th>${day}</th>`);
+            html += '<th>Handlinger</th></tr></thead><tbody>';
+
+            // Render each category
+            timeCategories.forEach(cat => {
+                html += '<tr>';
+                html += `<td class="habit-name">${cat.icon} ${cat.name}</td>`;
+                dayKeys.forEach(day => {
+                    const hours = cat.hours[day] || 0;
+                    html += `<td style="text-align: center;">${hours}h</td>`;
+                });
+                html += `<td style="text-align: center;">
+                    <button class="icon-btn" onclick="editTimeCategory('${cat.id}')" title="Rediger">✏️</button>
+                    <button class="icon-btn" onclick="deleteTimeCategory('${cat.id}')" title="Slet">🗑️</button>
+                </td>`;
+                html += '</tr>';
+            });
+
+            // Add totals row
+            html += '<tr style="font-weight: 600; background: var(--accent-light);">';
+            html += '<td>📊 Total Forbrug</td>';
+            dayKeys.forEach(day => {
+                const total = timeCategories.reduce((sum, cat) => sum + (cat.hours[day] || 0), 0);
+                html += `<td style="text-align: center;">${total}h</td>`;
+            });
+            html += '<td></td></tr>';
+
+            // Add habits row
+            html += '<tr style="font-weight: 600; background: #fff3cd;">';
+            html += '<td>🎯 Planlagte Vaner</td>';
+            dayKeys.forEach((day, i) => {
+                const habitHours = habits.reduce((sum, h) => {
+                    const goal = h.weeklyPlan ? h.weeklyPlan[day] : 0;
+                    return sum + goal;
+                }, 0);
+                html += `<td style="text-align: center;">${habitHours}h</td>`;
+            });
+            html += '<td></td></tr>';
+
+            // Add free time row
+            html += '<tr style="font-weight: 600; background: #d4edda;">';
+            html += '<td>✅ Ledig Tid</td>';
+            dayKeys.forEach(day => {
+                const committed = timeCategories.reduce((sum, cat) => sum + (cat.hours[day] || 0), 0);
+                const habitHours = habits.reduce((sum, h) => {
+                    const goal = h.weeklyPlan ? h.weeklyPlan[day] : 0;
+                    return sum + goal;
+                }, 0);
+                const free = 24 - committed - habitHours;
+                const color = free < 0 ? 'color: #721c24;' : '';
+                html += `<td style="text-align: center; ${color}">${free}h</td>`;
+            });
+            html += '<td></td></tr>';
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function renderTimeBudgetSummary() {
+            const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+            // Average across week
+            let avgCommitted = 0;
+            let avgHabits = 0;
+            let avgFree = 0;
+
+            dayKeys.forEach(day => {
+                const committed = timeCategories.reduce((sum, cat) => sum + (cat.hours[day] || 0), 0);
+                const habitHours = habits.reduce((sum, h) => {
+                    const goal = h.weeklyPlan ? h.weeklyPlan[day] : 0;
+                    return sum + goal;
+                }, 0);
+                const free = 24 - committed - habitHours;
+
+                avgCommitted += committed;
+                avgHabits += habitHours;
+                avgFree += free;
+            });
+
+            avgCommitted = Math.round(avgCommitted / 7 * 10) / 10;
+            avgHabits = Math.round(avgHabits / 7 * 10) / 10;
+            avgFree = Math.round(avgFree / 7 * 10) / 10;
+
+            document.getElementById('totalCommitted').textContent = avgCommitted + 'h';
+            document.getElementById('totalHabits').textContent = avgHabits + 'h';
+            document.getElementById('totalFree').textContent = avgFree + 'h';
+        }
+
+        function renderTimeBudgetInsights() {
+            const insights = [];
+            const dayNames = ['mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag', 'søndag'];
+            const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+            dayKeys.forEach((day, i) => {
+                const committed = timeCategories.reduce((sum, cat) => sum + (cat.hours[day] || 0), 0);
+                const habitHours = habits.reduce((sum, h) => {
+                    const goal = h.weeklyPlan ? h.weeklyPlan[day] : 0;
+                    return sum + goal;
+                }, 0);
+                const free = 24 - committed - habitHours;
+
+                if (free < 0) {
+                    insights.push(`⚠️ ${dayNames[i].charAt(0).toUpperCase() + dayNames[i].slice(1)}: Du har planlagt ${Math.abs(free)} timer for meget! Reducer enten forpligtelser eller vane-mål.`);
+                } else if (free < 2) {
+                    insights.push(`⏰ ${dayNames[i].charAt(0).toUpperCase() + dayNames[i].slice(1)}: Kun ${free}h ledig tid. Overvej om dine mål er realistiske.`);
+                } else if (free > 8) {
+                    insights.push(`💡 ${dayNames[i].charAt(0).toUpperCase() + dayNames[i].slice(1)}: ${free}h ledig tid. God mulighed for ekstra vaner eller hvile!`);
+                }
+            });
+
+            if (insights.length === 0) {
+                insights.push('✅ Din tid ser godt balanceret ud! Fortsæt sådan.');
+            }
+
+            document.getElementById('timeBudgetInsights').innerHTML = insights.map(i => `<li>${i}</li>`).join('');
+        }
+
+        function openAddCategoryModal() {
+            document.getElementById('timeCategoryModalTitle').textContent = 'Tilføj Tidskategori';
+            document.getElementById('timeCategoryForm').reset();
+            document.getElementById('timeCategoryForm').dataset.editId = '';
+            document.getElementById('timeCategoryModal').classList.add('active');
+        }
+
+        function editTimeCategory(categoryId) {
+            const category = timeCategories.find(c => c.id === categoryId);
+            if (!category) return;
+
+            document.getElementById('timeCategoryModalTitle').textContent = 'Rediger Tidskategori';
+            document.getElementById('categoryName').value = category.name;
+            document.getElementById('categoryIcon').value = category.icon;
+
+            const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            dayKeys.forEach((day, i) => {
+                const inputId = ['catMonday', 'catTuesday', 'catWednesday', 'catThursday', 'catFriday', 'catSaturday', 'catSunday'][i];
+                document.getElementById(inputId).value = category.hours[day] || 0;
+            });
+
+            document.getElementById('timeCategoryForm').dataset.editId = categoryId;
+            document.getElementById('timeCategoryModal').classList.add('active');
+        }
+
+        function deleteTimeCategory(categoryId) {
+            if (confirm('Er du sikker på du vil slette denne tidskategori?')) {
+                timeCategories = timeCategories.filter(c => c.id !== categoryId);
+                saveData();
+                renderTimeBudget();
+            }
+        }
+
+        function saveTimeCategory(event) {
+            event.preventDefault();
+
+            const editId = document.getElementById('timeCategoryForm').dataset.editId;
+            const categoryData = {
+                id: editId || 'cat_' + Date.now(),
+                name: document.getElementById('categoryName').value,
+                icon: document.getElementById('categoryIcon').value || '⏰',
+                hours: {
+                    monday: parseFloat(document.getElementById('catMonday').value) || 0,
+                    tuesday: parseFloat(document.getElementById('catTuesday').value) || 0,
+                    wednesday: parseFloat(document.getElementById('catWednesday').value) || 0,
+                    thursday: parseFloat(document.getElementById('catThursday').value) || 0,
+                    friday: parseFloat(document.getElementById('catFriday').value) || 0,
+                    saturday: parseFloat(document.getElementById('catSaturday').value) || 0,
+                    sunday: parseFloat(document.getElementById('catSunday').value) || 0
+                }
+            };
+
+            if (editId) {
+                const index = timeCategories.findIndex(c => c.id === editId);
+                timeCategories[index] = categoryData;
+            } else {
+                timeCategories.push(categoryData);
+            }
+
+            saveData();
+            closeTimeCategoryModal();
+            renderTimeBudget();
+        }
+
+        function closeTimeCategoryModal() {
+            document.getElementById('timeCategoryModal').classList.remove('active');
         }
 
         // ===== INITIALIZE APP =====
