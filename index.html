@@ -1326,35 +1326,56 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Timer per dag (kan variere per dag)</label>
-                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 8px;">
-                        <div style="text-align: center;">
-                            <label style="font-size: 11px; margin-bottom: 4px;">Man</label>
-                            <input type="number" id="catMonday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                    <label>Tidspunkter per dag (angiv start og slut)</label>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 8px;">
+                        <div>
+                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Mandag</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="time" id="catMondayStart" style="width: 100%; padding: 8px;">
+                                <input type="time" id="catMondayEnd" style="width: 100%; padding: 8px;">
+                            </div>
                         </div>
-                        <div style="text-align: center;">
-                            <label style="font-size: 11px; margin-bottom: 4px;">Tir</label>
-                            <input type="number" id="catTuesday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        <div>
+                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Tirsdag</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="time" id="catTuesdayStart" style="width: 100%; padding: 8px;">
+                                <input type="time" id="catTuesdayEnd" style="width: 100%; padding: 8px;">
+                            </div>
                         </div>
-                        <div style="text-align: center;">
-                            <label style="font-size: 11px; margin-bottom: 4px;">Ons</label>
-                            <input type="number" id="catWednesday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        <div>
+                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Onsdag</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="time" id="catWednesdayStart" style="width: 100%; padding: 8px;">
+                                <input type="time" id="catWednesdayEnd" style="width: 100%; padding: 8px;">
+                            </div>
                         </div>
-                        <div style="text-align: center;">
-                            <label style="font-size: 11px; margin-bottom: 4px;">Tor</label>
-                            <input type="number" id="catThursday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        <div>
+                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Torsdag</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="time" id="catThursdayStart" style="width: 100%; padding: 8px;">
+                                <input type="time" id="catThursdayEnd" style="width: 100%; padding: 8px;">
+                            </div>
                         </div>
-                        <div style="text-align: center;">
-                            <label style="font-size: 11px; margin-bottom: 4px;">Fre</label>
-                            <input type="number" id="catFriday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        <div>
+                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Fredag</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="time" id="catFridayStart" style="width: 100%; padding: 8px;">
+                                <input type="time" id="catFridayEnd" style="width: 100%; padding: 8px;">
+                            </div>
                         </div>
-                        <div style="text-align: center;">
-                            <label style="font-size: 11px; margin-bottom: 4px;">Lør</label>
-                            <input type="number" id="catSaturday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        <div>
+                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Lørdag</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="time" id="catSaturdayStart" style="width: 100%; padding: 8px;">
+                                <input type="time" id="catSaturdayEnd" style="width: 100%; padding: 8px;">
+                            </div>
                         </div>
-                        <div style="text-align: center;">
-                            <label style="font-size: 11px; margin-bottom: 4px;">Søn</label>
-                            <input type="number" id="catSunday" min="0" max="24" step="0.5" value="0" style="width: 100%; padding: 8px; text-align: center;">
+                        <div>
+                            <label style="font-size: 13px; font-weight: 500; margin-bottom: 4px; display: block;">Søndag</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="time" id="catSundayStart" style="width: 100%; padding: 8px;">
+                                <input type="time" id="catSundayEnd" style="width: 100%; padding: 8px;">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1448,19 +1469,46 @@
                 id: 'sleep',
                 name: 'Søvn',
                 icon: '🛏️',
-                hours: { monday: 8, tuesday: 8, wednesday: 8, thursday: 8, friday: 8, saturday: 9, sunday: 9 }
+                hours: { monday: 8, tuesday: 8, wednesday: 8, thursday: 8, friday: 8, saturday: 9, sunday: 9 },
+                times: {
+                    monday: { start: '00:00', end: '08:00' },
+                    tuesday: { start: '00:00', end: '08:00' },
+                    wednesday: { start: '00:00', end: '08:00' },
+                    thursday: { start: '00:00', end: '08:00' },
+                    friday: { start: '00:00', end: '08:00' },
+                    saturday: { start: '00:00', end: '09:00' },
+                    sunday: { start: '00:00', end: '09:00' }
+                }
             },
             {
                 id: 'work',
                 name: 'Arbejde',
                 icon: '💼',
-                hours: { monday: 8, tuesday: 8, wednesday: 8, thursday: 8, friday: 8, saturday: 0, sunday: 0 }
+                hours: { monday: 8, tuesday: 8, wednesday: 8, thursday: 8, friday: 8, saturday: 0, sunday: 0 },
+                times: {
+                    monday: { start: '09:00', end: '17:00' },
+                    tuesday: { start: '09:00', end: '17:00' },
+                    wednesday: { start: '09:00', end: '17:00' },
+                    thursday: { start: '09:00', end: '17:00' },
+                    friday: { start: '09:00', end: '17:00' },
+                    saturday: { start: '', end: '' },
+                    sunday: { start: '', end: '' }
+                }
             },
             {
                 id: 'transport',
                 name: 'Transport',
                 icon: '🚗',
-                hours: { monday: 1, tuesday: 1, wednesday: 1, thursday: 1, friday: 1, saturday: 0, sunday: 0 }
+                hours: { monday: 1, tuesday: 1, wednesday: 1, thursday: 1, friday: 1, saturday: 0, sunday: 0 },
+                times: {
+                    monday: { start: '08:00', end: '09:00' },
+                    tuesday: { start: '08:00', end: '09:00' },
+                    wednesday: { start: '08:00', end: '09:00' },
+                    thursday: { start: '08:00', end: '09:00' },
+                    friday: { start: '08:00', end: '09:00' },
+                    saturday: { start: '', end: '' },
+                    sunday: { start: '', end: '' }
+                }
             }
         ];
         let currentHabitId = null;
@@ -3088,6 +3136,8 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
             dayKeys.forEach((day, i) => {
                 const committed = timeCategories.reduce((sum, cat) => sum + (cat.hours[day] || 0), 0);
                 const habitHours = habits.reduce((sum, h) => {
+                    // Only count habits measured in hours (unit='timer')
+                    if (h.unit !== 'timer') return sum;
                     const goal = h.weeklyPlan ? h.weeklyPlan[day] : 0;
                     return sum + goal;
                 }, 0);
@@ -3121,21 +3171,34 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
 
                         <!-- Categories list -->
                         <div style="font-size: 13px; color: var(--text-secondary);">
-                            ${timeCategories.filter(cat => cat.hours[day] > 0).map(cat =>
-                                `<div style="display: flex; justify-content: space-between; margin: 4px 0;">
-                                    <span>${cat.icon} ${cat.name}</span>
+                            ${timeCategories.filter(cat => cat.hours[day] > 0).map(cat => {
+                                const times = cat.times && cat.times[day] && cat.times[day].start && cat.times[day].end
+                                    ? ` (${cat.times[day].start}-${cat.times[day].end})`
+                                    : '';
+                                return `<div style="display: flex; justify-content: space-between; margin: 4px 0;">
+                                    <span>${cat.icon} ${cat.name}${times}</span>
                                     <span style="font-weight: 500;">${cat.hours[day]}h</span>
-                                </div>`
-                            ).join('')}
+                                </div>`;
+                            }).join('')}
                             ${timeCategories.filter(cat => cat.hours[day] > 0).length > 0 ? '<hr style="margin: 8px 0; border: none; border-top: 1px solid var(--border);">' : ''}
                             <div style="display: flex; justify-content: space-between; margin: 4px 0; font-weight: 600;">
                                 <span>📊 Total forbrug</span>
                                 <span>${committed}h</span>
                             </div>
-                            <div style="display: flex; justify-content: space-between; margin: 4px 0; font-weight: 600; color: var(--accent);">
-                                <span>🎯 Planlagte vaner</span>
-                                <span>${habitHours}h</span>
-                            </div>
+                            ${habits.filter(h => h.unit === 'timer' && h.weeklyPlan && h.weeklyPlan[day] > 0).length > 0 ? `
+                                <hr style="margin: 8px 0; border: none; border-top: 1px solid var(--border);">
+                                <div style="font-weight: 600; color: var(--accent); margin: 4px 0;">🎯 Planlagte vaner:</div>
+                                ${habits.filter(h => h.unit === 'timer' && h.weeklyPlan && h.weeklyPlan[day] > 0).map(habit =>
+                                    `<div style="display: flex; justify-content: space-between; margin: 4px 0; padding-left: 12px;">
+                                        <span>${habit.icon} ${habit.name}</span>
+                                        <span style="font-weight: 500;">${habit.weeklyPlan[day]}h</span>
+                                    </div>`
+                                ).join('')}
+                                <div style="display: flex; justify-content: space-between; margin: 4px 0; font-weight: 600; color: var(--accent);">
+                                    <span>Total vaner</span>
+                                    <span>${habitHours}h</span>
+                                </div>
+                            ` : ''}
                             <div style="display: flex; justify-content: space-between; margin: 4px 0; font-weight: 600; color: ${freeTextColor};">
                                 <span>✅ Ledig tid</span>
                                 <span>${free}h</span>
@@ -3175,6 +3238,8 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
             dayKeys.forEach(day => {
                 const committed = timeCategories.reduce((sum, cat) => sum + (cat.hours[day] || 0), 0);
                 const habitHours = habits.reduce((sum, h) => {
+                    // Only count habits measured in hours (unit='timer')
+                    if (h.unit !== 'timer') return sum;
                     const goal = h.weeklyPlan ? h.weeklyPlan[day] : 0;
                     return sum + goal;
                 }, 0);
@@ -3202,6 +3267,8 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
             dayKeys.forEach((day, i) => {
                 const committed = timeCategories.reduce((sum, cat) => sum + (cat.hours[day] || 0), 0);
                 const habitHours = habits.reduce((sum, h) => {
+                    // Only count habits measured in hours (unit='timer')
+                    if (h.unit !== 'timer') return sum;
                     const goal = h.weeklyPlan ? h.weeklyPlan[day] : 0;
                     return sum + goal;
                 }, 0);
@@ -3239,9 +3306,20 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
             document.getElementById('categoryIcon').value = category.icon;
 
             const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
             dayKeys.forEach((day, i) => {
-                const inputId = ['catMonday', 'catTuesday', 'catWednesday', 'catThursday', 'catFriday', 'catSaturday', 'catSunday'][i];
-                document.getElementById(inputId).value = category.hours[day] || 0;
+                const startId = `cat${dayNames[i]}Start`;
+                const endId = `cat${dayNames[i]}End`;
+
+                // Use times if available, otherwise leave empty
+                if (category.times && category.times[day]) {
+                    document.getElementById(startId).value = category.times[day].start || '';
+                    document.getElementById(endId).value = category.times[day].end || '';
+                } else {
+                    document.getElementById(startId).value = '';
+                    document.getElementById(endId).value = '';
+                }
             });
 
             document.getElementById('timeCategoryForm').dataset.editId = categoryId;
@@ -3256,23 +3334,54 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
             }
         }
 
+        // Helper function to calculate hours from start and end times
+        function calculateHoursFromTimes(startTime, endTime) {
+            if (!startTime || !endTime) return 0;
+
+            const [startHour, startMin] = startTime.split(':').map(Number);
+            const [endHour, endMin] = endTime.split(':').map(Number);
+
+            let hours = endHour - startHour;
+            let minutes = endMin - startMin;
+
+            // Handle cases where end time is past midnight
+            if (hours < 0) {
+                hours += 24;
+            }
+
+            // Convert minutes to fraction of hour
+            const totalHours = hours + (minutes / 60);
+
+            // Round to 1 decimal place
+            return Math.round(totalHours * 10) / 10;
+        }
+
         function saveTimeCategory(event) {
             event.preventDefault();
 
             const editId = document.getElementById('timeCategoryForm').dataset.editId;
+            const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+            const hours = {};
+            const times = {};
+
+            dayKeys.forEach((day, i) => {
+                const startId = `cat${dayNames[i]}Start`;
+                const endId = `cat${dayNames[i]}End`;
+                const startTime = document.getElementById(startId).value;
+                const endTime = document.getElementById(endId).value;
+
+                times[day] = { start: startTime, end: endTime };
+                hours[day] = calculateHoursFromTimes(startTime, endTime);
+            });
+
             const categoryData = {
                 id: editId || 'cat_' + Date.now(),
                 name: document.getElementById('categoryName').value,
                 icon: document.getElementById('categoryIcon').value || '⏰',
-                hours: {
-                    monday: parseFloat(document.getElementById('catMonday').value) || 0,
-                    tuesday: parseFloat(document.getElementById('catTuesday').value) || 0,
-                    wednesday: parseFloat(document.getElementById('catWednesday').value) || 0,
-                    thursday: parseFloat(document.getElementById('catThursday').value) || 0,
-                    friday: parseFloat(document.getElementById('catFriday').value) || 0,
-                    saturday: parseFloat(document.getElementById('catSaturday').value) || 0,
-                    sunday: parseFloat(document.getElementById('catSunday').value) || 0
-                }
+                hours: hours,
+                times: times
             };
 
             if (editId) {
