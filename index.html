@@ -1326,6 +1326,19 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Hvordan vil du angive tid?</label>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <button type="button" id="modeTimeRange" onclick="setInputMode('timeRange')" style="flex: 1; padding: 12px; background: var(--accent); color: white; border: 1px solid var(--border); cursor: pointer; font-weight: 500;">
+                            🕒 Tidspunkter (Start-Slut)
+                        </button>
+                        <button type="button" id="modeDuration" onclick="setInputMode('duration')" style="flex: 1; padding: 12px; background: var(--accent-light); color: var(--text-primary); border: 1px solid var(--border); cursor: pointer;">
+                            ⏱️ Varighed (Timer)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TIME RANGE MODE -->
+                <div id="timeRangeInputs" class="form-group">
                     <label>Tidspunkter per dag (angiv start og slut)</label>
                     <div style="display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 8px;">
                         <div>
@@ -1396,6 +1409,83 @@
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                 <input type="time" id="catSundayStart" style="width: 100%; padding: 8px;">
                                 <input type="time" id="catSundayEnd" style="width: 100%; padding: 8px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DURATION MODE -->
+                <div id="durationInputs" class="form-group" style="display: none;">
+                    <label>Varighed per dag (timer og minutter)</label>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 8px;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Mandag</label>
+                                <button type="button" onclick="copyDurationToAll('Monday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="number" id="catMondayHours" min="0" max="24" step="1" placeholder="Timer" style="width: 100%; padding: 8px;">
+                                <input type="number" id="catMondayMinutes" min="0" max="59" step="1" placeholder="Min" style="width: 100%; padding: 8px;">
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Tirsdag</label>
+                                <button type="button" onclick="copyDurationToAll('Tuesday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="number" id="catTuesdayHours" min="0" max="24" step="1" placeholder="Timer" style="width: 100%; padding: 8px;">
+                                <input type="number" id="catTuesdayMinutes" min="0" max="59" step="1" placeholder="Min" style="width: 100%; padding: 8px;">
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Onsdag</label>
+                                <button type="button" onclick="copyDurationToAll('Wednesday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="number" id="catWednesdayHours" min="0" max="24" step="1" placeholder="Timer" style="width: 100%; padding: 8px;">
+                                <input type="number" id="catWednesdayMinutes" min="0" max="59" step="1" placeholder="Min" style="width: 100%; padding: 8px;">
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Torsdag</label>
+                                <button type="button" onclick="copyDurationToAll('Thursday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="number" id="catThursdayHours" min="0" max="24" step="1" placeholder="Timer" style="width: 100%; padding: 8px;">
+                                <input type="number" id="catThursdayMinutes" min="0" max="59" step="1" placeholder="Min" style="width: 100%; padding: 8px;">
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Fredag</label>
+                                <button type="button" onclick="copyDurationToAll('Friday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="number" id="catFridayHours" min="0" max="24" step="1" placeholder="Timer" style="width: 100%; padding: 8px;">
+                                <input type="number" id="catFridayMinutes" min="0" max="59" step="1" placeholder="Min" style="width: 100%; padding: 8px;">
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Lørdag</label>
+                                <button type="button" onclick="copyDurationToAll('Saturday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="number" id="catSaturdayHours" min="0" max="24" step="1" placeholder="Timer" style="width: 100%; padding: 8px;">
+                                <input type="number" id="catSaturdayMinutes" min="0" max="59" step="1" placeholder="Min" style="width: 100%; padding: 8px;">
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 13px; font-weight: 500;">Søndag</label>
+                                <button type="button" onclick="copyDurationToAll('Sunday')" style="font-size: 11px; padding: 4px 8px; background: var(--accent-light); border: 1px solid var(--border); cursor: pointer;">📋 Kopier til alle</button>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <input type="number" id="catSundayHours" min="0" max="24" step="1" placeholder="Timer" style="width: 100%; padding: 8px;">
+                                <input type="number" id="catSundayMinutes" min="0" max="59" step="1" placeholder="Min" style="width: 100%; padding: 8px;">
                             </div>
                         </div>
                     </div>
@@ -3311,6 +3401,24 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
             document.getElementById('timeBudgetInsights').innerHTML = insights.map(i => `<li>${i}</li>`).join('');
         }
 
+        function setInputMode(mode) {
+            if (mode === 'timeRange') {
+                document.getElementById('timeRangeInputs').style.display = 'block';
+                document.getElementById('durationInputs').style.display = 'none';
+                document.getElementById('modeTimeRange').style.background = 'var(--accent)';
+                document.getElementById('modeTimeRange').style.color = 'white';
+                document.getElementById('modeDuration').style.background = 'var(--accent-light)';
+                document.getElementById('modeDuration').style.color = 'var(--text-primary)';
+            } else {
+                document.getElementById('timeRangeInputs').style.display = 'none';
+                document.getElementById('durationInputs').style.display = 'block';
+                document.getElementById('modeTimeRange').style.background = 'var(--accent-light)';
+                document.getElementById('modeTimeRange').style.color = 'var(--text-primary)';
+                document.getElementById('modeDuration').style.background = 'var(--accent)';
+                document.getElementById('modeDuration').style.color = 'white';
+            }
+        }
+
         function copyDayToAll(sourceDay) {
             const startId = `cat${sourceDay}Start`;
             const endId = `cat${sourceDay}End`;
@@ -3331,10 +3439,31 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
             });
         }
 
+        function copyDurationToAll(sourceDay) {
+            const hoursId = `cat${sourceDay}Hours`;
+            const minutesId = `cat${sourceDay}Minutes`;
+            const hours = document.getElementById(hoursId).value;
+            const minutes = document.getElementById(minutesId).value;
+
+            if (!hours && !minutes) {
+                alert('Angiv venligst timer og minutter først!');
+                return;
+            }
+
+            const allDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            allDays.forEach(day => {
+                if (day !== sourceDay) {
+                    document.getElementById(`cat${day}Hours`).value = hours || 0;
+                    document.getElementById(`cat${day}Minutes`).value = minutes || 0;
+                }
+            });
+        }
+
         function openAddCategoryModal() {
             document.getElementById('timeCategoryModalTitle').textContent = 'Tilføj Tidskategori';
             document.getElementById('timeCategoryForm').reset();
             document.getElementById('timeCategoryForm').dataset.editId = '';
+            setInputMode('timeRange'); // Default to time range mode
             document.getElementById('timeCategoryModal').classList.add('active');
         }
 
@@ -3349,11 +3478,21 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
             const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
             const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
+            // Determine which mode to use:
+            // If category has times data with actual values, use time range mode
+            // Otherwise, use duration mode
+            let hasTimeData = false;
+            if (category.times) {
+                hasTimeData = dayKeys.some(day => {
+                    return category.times[day] && (category.times[day].start || category.times[day].end);
+                });
+            }
+
+            // Populate both input sections
             dayKeys.forEach((day, i) => {
+                // Time range inputs
                 const startId = `cat${dayNames[i]}Start`;
                 const endId = `cat${dayNames[i]}End`;
-
-                // Use times if available, otherwise leave empty
                 if (category.times && category.times[day]) {
                     document.getElementById(startId).value = category.times[day].start || '';
                     document.getElementById(endId).value = category.times[day].end || '';
@@ -3361,7 +3500,23 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
                     document.getElementById(startId).value = '';
                     document.getElementById(endId).value = '';
                 }
+
+                // Duration inputs
+                const hoursId = `cat${dayNames[i]}Hours`;
+                const minutesId = `cat${dayNames[i]}Minutes`;
+                const totalHours = category.hours[day] || 0;
+                const hours = Math.floor(totalHours);
+                const minutes = Math.round((totalHours - hours) * 60);
+                document.getElementById(hoursId).value = hours;
+                document.getElementById(minutesId).value = minutes;
             });
+
+            // Set the appropriate mode
+            if (hasTimeData) {
+                setInputMode('timeRange');
+            } else {
+                setInputMode('duration');
+            }
 
             document.getElementById('timeCategoryForm').dataset.editId = categoryId;
             document.getElementById('timeCategoryModal').classList.add('active');
@@ -3407,15 +3562,36 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
             const hours = {};
             const times = {};
 
-            dayKeys.forEach((day, i) => {
-                const startId = `cat${dayNames[i]}Start`;
-                const endId = `cat${dayNames[i]}End`;
-                const startTime = document.getElementById(startId).value;
-                const endTime = document.getElementById(endId).value;
+            // Determine which mode is active
+            const isTimeRangeMode = document.getElementById('timeRangeInputs').style.display !== 'none';
 
-                times[day] = { start: startTime, end: endTime };
-                hours[day] = calculateHoursFromTimes(startTime, endTime);
-            });
+            if (isTimeRangeMode) {
+                // Time range mode (09:00-17:00)
+                dayKeys.forEach((day, i) => {
+                    const startId = `cat${dayNames[i]}Start`;
+                    const endId = `cat${dayNames[i]}End`;
+                    const startTime = document.getElementById(startId).value;
+                    const endTime = document.getElementById(endId).value;
+
+                    times[day] = { start: startTime, end: endTime };
+                    hours[day] = calculateHoursFromTimes(startTime, endTime);
+                });
+            } else {
+                // Duration mode (8 timer)
+                dayKeys.forEach((day, i) => {
+                    const hoursId = `cat${dayNames[i]}Hours`;
+                    const minutesId = `cat${dayNames[i]}Minutes`;
+                    const hoursValue = parseFloat(document.getElementById(hoursId).value) || 0;
+                    const minutesValue = parseFloat(document.getElementById(minutesId).value) || 0;
+
+                    // Convert to total hours (e.g., 8 hours + 30 min = 8.5)
+                    const totalHours = hoursValue + (minutesValue / 60);
+                    hours[day] = Math.round(totalHours * 10) / 10;
+
+                    // Don't save times data in duration mode
+                    times[day] = { start: '', end: '' };
+                });
+            }
 
             const categoryData = {
                 id: editId || 'cat_' + Date.now(),
@@ -3427,7 +3603,10 @@ Gå til Statistik-siden for at se dine mønstre og justere dine ugentlige mål!
 
             if (editId) {
                 const index = timeCategories.findIndex(c => c.id === editId);
-                timeCategories[index] = categoryData;
+                // Preserve existing data that's not being updated
+                if (timeCategories[index]) {
+                    timeCategories[index] = categoryData;
+                }
             } else {
                 timeCategories.push(categoryData);
             }
